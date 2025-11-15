@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Testing - QA Training Site</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .download-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .download-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .download-card h3 {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .download-card p {
+            color: #6c757d;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .download-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .download-info span {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .download-info strong {
+            color: #495057;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(17, 153, 142, 0.4);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .btn-info:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .activity-monitor {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .activity-monitor h3 {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        .download-log {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            border: 1px solid #dee2e6;
+        }
+
+        .log-entry {
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+
+        .log-entry.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .log-entry.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .log-entry.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 24px;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: #5a6268;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: -20px;
+                border-radius: 0;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .download-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📥 Download Testing</h1>
+            <p>Test file download functionality with various file types and methods</p>
+        </header>
+        
+        <main class="main-content">
+            <section class="section">
+                <h2>Sample Files for Download</h2>
+                <div class="download-grid">
+                    <div class="download-card">
+                        <h3>🖼️ Sample Image</h3>
+                        <p>Download a sample test image for automation testing</p>
+                        <div class="download-info">
+                            <span><strong>File:</strong> test-image.png</span>
+                            <span><strong>Size:</strong> ~50KB</span>
+                            <span><strong>Type:</strong> PNG Image</span>
+                        </div>
+                        <button class="btn btn-primary" onclick="downloadImage()">Download Image</button>
+                        <button class="btn btn-info" onclick="previewImage()">Preview Image</button>
+                    </div>
+
+                    <div class="download-card">
+                        <h3>📄 Test Document</h3>
+                        <p>Download a sample text document for testing purposes</p>
+                        <div class="download-info">
+                            <span><strong>File:</strong> test-document.txt</span>
+                            <span><strong>Size:</strong> ~2KB</span>
+                            <span><strong>Type:</strong> Text File</span>
+                        </div>
+                        <button class="btn btn-primary" onclick="downloadDocument()">Download Document</button>
+                        <button class="btn btn-info" onclick="viewDocument()">View Content</button>
+                    </div>
+
+                    <div class="download-card">
+                        <h3>📊 Sample Data</h3>
+                        <p>Download JSON data file for API testing scenarios</p>
+                        <div class="download-info">
+                            <span><strong>File:</strong> sample-data.json</span>
+                            <span><strong>Size:</strong> ~1KB</span>
+                            <span><strong>Type:</strong> JSON Data</span>
+                        </div>
+                        <button class="btn btn-primary" onclick="downloadJSON()">Download JSON</button>
+                        <button class="btn btn-info" onclick="viewJSON()">View JSON</button>
+                    </div>
+
+                    <div class="download-card">
+                        <h3>📋 Test Report</h3>
+                        <p>Download a sample CSV file for data testing</p>
+                        <div class="download-info">
+                            <span><strong>File:</strong> test-report.csv</span>
+                            <span><strong>Size:</strong> ~500B</span>
+                            <span><strong>Type:</strong> CSV Data</span>
+                        </div>
+                        <button class="btn btn-primary" onclick="downloadCSV()">Download CSV</button>
+                        <button class="btn btn-info" onclick="viewCSV()">View CSV</button>
+                    </div>
+
+                    <div class="download-card">
+                        <h3>🔧 Configuration</h3>
+                        <p>Download a sample configuration file for testing</p>
+                        <div class="download-info">
+                            <span><strong>File:</strong> config.xml</span>
+                            <span><strong>Size:</strong> ~800B</span>
+                            <span><strong>Type:</strong> XML Config</span>
+                        </div>
+                        <button class="btn btn-primary" onclick="downloadXML()">Download XML</button>
+                        <button class="btn btn-info" onclick="viewXML()">View XML</button>
+                    </div>
+
+                    <div class="download-card">
+                        <h3>📦 Archive File</h3>
+                        <p>Download a sample archive for testing extraction</p>
+                        <div class="download-info">
+                            <span><strong>File:</strong> sample-data.zip</span>
+                            <span><strong>Size:</strong> ~3KB</span>
+                            <span><strong>Type:</strong> ZIP Archive</span>
+                        </div>
+                        <button class="btn btn-primary" onclick="downloadZIP()">Download ZIP</button>
+                        <button class="btn btn-success" onclick="downloadAll()">Download All</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="activity-monitor">
+                <h3>📊 Download Activity Monitor</h3>
+                <p>Monitor all download activities and their status in real-time.</p>
+                
+                <div class="controls">
+                    <button class="btn btn-warning" onclick="clearLog()">Clear Log</button>
+                    <button class="btn btn-success" onclick="exportLog()">Export Log</button>
+                </div>
+                
+                <div id="downloadLog" class="download-log">
+                    <div class="log-entry info">Download log initialized. Ready for file downloads...</div>
+                </div>
+            </section>
+
+            <a href="../index.html" class="back-link">← Back to Home</a>
+        </main>
+    </div>
+
+    <script>
+        // Download logging system
+        function addToLog(message, type = 'info') {
+            const log = document.getElementById('downloadLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Clear log function
+        function clearLog() {
+            const log = document.getElementById('downloadLog');
+            log.innerHTML = '<div class="log-entry info">Download log cleared.</div>';
+            addToLog('Log cleared by user', 'info');
+        }
+
+        // Export log function
+        function exportLog() {
+            const logEntries = document.querySelectorAll('.log-entry');
+            const logText = Array.from(logEntries)
+                .map(entry => entry.textContent)
+                .join('\n');
+            
+            const blob = new Blob([logText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `download-log-${new Date().toISOString().slice(0, 10)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            addToLog('Download log exported successfully', 'success');
+        }
+
+        // Image download function
+        function downloadImage() {
+            try {
+                // Create a simple canvas-based image
+                const canvas = document.createElement('canvas');
+                canvas.width = 400;
+                canvas.height = 300;
+                const ctx = canvas.getContext('2d');
+                
+                // Draw a gradient background
+                const gradient = ctx.createLinearGradient(0, 0, 400, 300);
+                gradient.addColorStop(0, '#667eea');
+                gradient.addColorStop(1, '#764ba2');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 400, 300);
+                
+                // Add text
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 30px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Test Image', 200, 140);
+                ctx.font = '20px Arial';
+                ctx.fillText('Download Testing', 200, 180);
+                
+                // Convert to blob and download
+                canvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'test-image.png';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    addToLog('Image downloaded successfully: test-image.png', 'success');
+                });
+            } catch (error) {
+                addToLog('Failed to download image: ' + error.message, 'error');
+            }
+        }
+
+        // Preview image function
+        function previewImage() {
+            addToLog('Image preview feature - opens in new tab', 'info');
+            downloadImage(); // For demo purposes
+        }
+
+        // Document download function
+        function downloadDocument() {
+            try {
+                const content = `Test Document
+================
+
+This is a sample text document for download testing.
+
+Created: ${new Date().toLocaleString()}
+Purpose: QA Testing
+File Type: Text Document
+
+This document contains sample text that can be used for testing
+download functionality in automated testing scenarios.
+
+Features:
+- Plain text format
+- Timestamp included
+- Multiple lines of text
+- Special characters: !@#$%^&*()
+
+End of document.`;
+                
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'test-document.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+                addToLog('Document downloaded successfully: test-document.txt', 'success');
+            } catch (error) {
+                addToLog('Failed to download document: ' + error.message, 'error');
+            }
+        }
+
+        // View document function
+        function viewDocument() {
+            addToLog('Document content view - check downloaded file', 'info');
+            downloadDocument();
+        }
+
+        // JSON download function
+        function downloadJSON() {
+            try {
+                const data = {
+                    "testData": {
+                        "id": "test-001",
+                        "name": "Sample Data",
+                        "timestamp": new Date().toISOString(),
+                        "status": "active",
+                        "items": [
+                            {"id": 1, "value": "First item", "type": "string"},
+                            {"id": 2, "value": 42, "type": "number"},
+                            {"id": 3, "value": true, "type": "boolean"}
+                        ],
+                        "metadata": {
+                            "version": "1.0",
+                            "author": "QA Training Site",
+                            "purpose": "Download Testing"
+                        }
+                    }
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'sample-data.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                addToLog('JSON file downloaded successfully: sample-data.json', 'success');
+            } catch (error) {
+                addToLog('Failed to download JSON: ' + error.message, 'error');
+            }
+        }
+
+        // View JSON function
+        function viewJSON() {
+            addToLog('JSON data view - check downloaded file', 'info');
+            downloadJSON();
+        }
+
+        // CSV download function
+        function downloadCSV() {
+            try {
+                const csvContent = `ID,Name,Status,Created,Type
+1,Test Item 1,Active,2024-01-01,Sample
+2,Test Item 2,Pending,2024-01-02,Example
+3,Test Item 3,Complete,2024-01-03,Template
+4,Test Item 4,Active,2024-01-04,Demo
+5,Test Item 5,Pending,2024-01-05,Test`;
+                
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'test-report.csv';
+                a.click();
+                URL.revokeObjectURL(url);
+                addToLog('CSV file downloaded successfully: test-report.csv', 'success');
+            } catch (error) {
+                addToLog('Failed to download CSV: ' + error.message, 'error');
+            }
+        }
+
+        // View CSV function
+        function viewCSV() {
+            addToLog('CSV data view - check downloaded file', 'info');
+            downloadCSV();
+        }
+
+        // XML download function
+        function downloadXML() {
+            try {
+                const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <settings>
+        <application name="QA Training Site" version="1.0"/>
+        <environment type="testing" debug="true"/>
+        <database driver="sqlite" connection="test.db"/>
+    </settings>
+    <features>
+        <feature name="downloads" enabled="true"/>
+        <feature name="uploads" enabled="true"/>
+        <feature name="logging" enabled="true"/>
+    </features>
+    <metadata>
+        <created>${new Date().toISOString()}</created>
+        <author>QA Training Site</author>
+        <purpose>Configuration Testing</purpose>
+    </metadata>
+</configuration>`;
+                
+                const blob = new Blob([xmlContent], { type: 'application/xml' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'config.xml';
+                a.click();
+                URL.revokeObjectURL(url);
+                addToLog('XML file downloaded successfully: config.xml', 'success');
+            } catch (error) {
+                addToLog('Failed to download XML: ' + error.message, 'error');
+            }
+        }
+
+        // View XML function
+        function viewXML() {
+            addToLog('XML content view - check downloaded file', 'info');
+            downloadXML();
+        }
+
+        // ZIP download function (simulated)
+        function downloadZIP() {
+            try {
+                // Create a simple text file to simulate ZIP content
+                const zipContent = `This is a simulated ZIP file for testing purposes.
+In a real implementation, this would contain compressed files.
+                
+Files included in this ZIP:
+- readme.txt
+- sample.json
+- config.xml
+
+Created: ${new Date().toLocaleString()}
+Purpose: Download Testing
+Note: This is a text simulation of a ZIP file.`;
+                
+                const blob = new Blob([zipContent], { type: 'application/zip' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'sample-data.zip';
+                a.click();
+                URL.revokeObjectURL(url);
+                addToLog('ZIP file downloaded successfully: sample-data.zip', 'success');
+            } catch (error) {
+                addToLog('Failed to download ZIP: ' + error.message, 'error');
+            }
+        }
+
+        // Download all files function
+        function downloadAll() {
+            addToLog('Starting batch download of all files...', 'info');
+            
+            setTimeout(() => downloadImage(), 100);
+            setTimeout(() => downloadDocument(), 300);
+            setTimeout(() => downloadJSON(), 500);
+            setTimeout(() => downloadCSV(), 700);
+            setTimeout(() => downloadXML(), 900);
+            setTimeout(() => downloadZIP(), 1100);
+            
+            setTimeout(() => {
+                addToLog('Batch download completed! All files downloaded.', 'success');
+            }, 1300);
+        }
+
+        // Initialize
+        addToLog('Download testing page loaded successfully', 'info');
+    </script>
+</body>
+</html>

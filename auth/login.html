@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - QA Training Site</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h2 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #6c757d;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .test-credentials {
+            background: #e3f2fd;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .test-credentials h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .credential-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .credential-label {
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .credential-value {
+            color: #1976d2;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            background: #f0f8ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+            border-left: 4px solid #dc3545;
+        }
+
+        /* Toast notification styles */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #dc3545;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 300px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .toast-message {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #721c24;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .toast-close:hover {
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+            border-left: 4px solid #28a745;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+                margin: -20px;
+                border-radius: 0;
+            }
+            
+            .login-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <header class="login-header">
+            <h2>🔐 Login</h2>
+            <p>Enter your credentials to access the training site</p>
+        </header>
+        
+        <div id="errorMessage" class="error-message">
+            Invalid credentials. Please try again.
+        </div>
+        
+        <div id="successMessage" class="success-message">
+            Login successful! Redirecting...
+        </div>
+        
+        <form id="loginForm" onsubmit="return login(event)">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    class="form-control" 
+                    placeholder="Enter your username"
+                    value="admin"
+                    required
+                    autocomplete="username"
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    class="form-control" 
+                    placeholder="Enter your password"
+                    value="admin123"
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+            
+            <button type="submit" id="loginBtn" class="login-btn">
+                Login
+            </button>
+        </form>
+        
+        <div class="test-credentials">
+            <h4>📋 Test Credentials</h4>
+            <div class="credential-item">
+                <span class="credential-label">Username:</span>
+                <span class="credential-value">admin</span>
+            </div>
+            <div class="credential-item">
+                <span class="credential-label">Password:</span>
+                <span class="credential-value">admin123</span>
+            </div>
+        </div>
+        
+        <a href="../index.html" class="back-link">← Back to Home</a>
+    </div>
+
+    <!-- Toast notification container -->
+    <div id="toast" class="toast">
+        <span class="toast-icon">❌</span>
+        <span class="toast-message">Invalid credentials. Please try again.</span>
+        <button class="toast-close" onclick="hideToast()">×</button>
+    </div>
+
+    <script>
+        // Toast notification functions
+        function showToast(message, type = 'error') {
+            const toast = document.getElementById('toast');
+            const toastMessage = toast.querySelector('.toast-message');
+            const toastIcon = toast.querySelector('.toast-icon');
+            
+            // Update message
+            toastMessage.textContent = message;
+            
+            // Update icon based on type
+            if (type === 'error') {
+                toastIcon.textContent = '❌';
+                toast.style.background = 'linear-gradient(135deg, #f8d7da, #f5c6cb)';
+                toast.style.color = '#721c24';
+                toast.style.borderLeftColor = '#dc3545';
+            } else if (type === 'success') {
+                toastIcon.textContent = '✅';
+                toast.style.background = 'linear-gradient(135deg, #d4edda, #c3e6cb)';
+                toast.style.color = '#155724';
+                toast.style.borderLeftColor = '#28a745';
+            }
+            
+            // Show toast
+            toast.classList.add('show');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                hideToast();
+            }, 5000);
+        }
+
+        function hideToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('show');
+        }
+
+        function login(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            const loginContainer = document.querySelector('.login-container');
+            
+            // Hide any existing messages
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            
+            // Validate credentials
+            if (username === 'admin' && password === 'admin123') {
+                // Store session in localStorage
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('username', username);
+                
+                // Show success message
+                successMessage.style.display = 'block';
+                loginContainer.classList.add('fade-in');
+                
+                // Show success toast
+                showToast('Login successful! Redirecting...', 'success');
+                
+                // Redirect after delay
+                setTimeout(() => {
+                    window.location.href = 'welcome.html';
+                }, 1500);
+            } else {
+                // Show error message with shake animation
+                errorMessage.style.display = 'block';
+                loginContainer.classList.add('shake');
+                
+                // Show toast notification
+                showToast('Invalid credentials. Please try again.', 'error');
+                
+                // Remove shake animation after it completes
+                setTimeout(() => {
+                    loginContainer.classList.remove('shake');
+                }, 500);
+                
+                // Clear password field
+                document.getElementById('password').value = '';
+                
+                // Focus on username field
+                document.getElementById('username').focus();
+            }
+            
+            return false;
+        }
+
+        // Add enter key support for form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('loginForm');
+            const inputs = form.querySelectorAll('input');
+            
+            inputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        login(e);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

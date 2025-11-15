@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Testing - QA Training Site</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .api-section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .section-description {
+            color: #6c757d;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        .demo-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 4px solid #007bff;
+        }
+
+        .demo-container h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .demo-container p {
+            color: #6c757d;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #212529;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+
+        .api-form {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+
+        .method-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .method-btn {
+            padding: 8px 16px;
+            border: 2px solid #dee2e6;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .method-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .response-area {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 200px;
+            border: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .response-status {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .response-content {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading-spinner.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .endpoint-list {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .endpoint-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .endpoint-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .endpoint-item.active {
+            border-color: #007bff;
+            background: #f0f8ff;
+        }
+
+        .endpoint-method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        .method-get { background: #d4edda; color: #155724; }
+        .method-post { background: #cce5ff; color: #004085; }
+        .method-put { background: #fff3cd; color: #856404; }
+        .method-delete { background: #f8d7da; color: #721c24; }
+
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .endpoint-description {
+            color: #6c757d;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .status-panel {
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .status-panel h5 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .status-content {
+            color: #495057;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .container {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: -20px;
+                border-radius: 0;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🔌 API Testing</h1>
+            <p>Comprehensive API testing playground with mock data and response handling</p>
+        </header>
+        
+        <main class="main-content">
+            <!-- API Endpoints -->
+            <div class="api-section">
+                <h2 class="section-title">Available API Endpoints</h2>
+                <p class="section-description">Click on any endpoint to test it with different HTTP methods</p>
+                
+                <div class="demo-container">
+                    <h3>REST API Endpoints</h3>
+                    <p>Test various API endpoints with different HTTP methods and parameters.</p>
+                    
+                    <div class="endpoint-list" id="endpointList">
+                        <div class="endpoint-item" data-endpoint="/users" data-method="GET">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-path">/users</span>
+                            <div class="endpoint-description">Get all users</div>
+                        </div>
+                        
+                        <div class="endpoint-item" data-endpoint="/users" data-method="POST">
+                            <span class="endpoint-method method-post">POST</span>
+                            <span class="endpoint-path">/users</span>
+                            <div class="endpoint-description">Create a new user</div>
+                        </div>
+                        
+                        <div class="endpoint-item" data-endpoint="/posts" data-method="GET">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-path">/posts</span>
+                            <div class="endpoint-description">Get all posts</div>
+                        </div>
+                        
+                        <div class="endpoint-item" data-endpoint="/posts" data-method="POST">
+                            <span class="endpoint-method method-post">POST</span>
+                            <span class="endpoint-path">/posts</span>
+                            <div class="endpoint-description">Create a new post</div>
+                        </div>
+                        
+                        <div class="endpoint-item" data-endpoint="/comments" data-method="GET">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-path">/comments</span>
+                            <div class="endpoint-description">Get all comments</div>
+                        </div>
+                        
+                        <div class="endpoint-item" data-endpoint="/products" data-method="GET">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-path">/products</span>
+                            <div class="endpoint-description">Get all products</div>
+                        </div>
+                        
+                        <div class="endpoint-item" data-endpoint="/todos" data-method="GET">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-path">/todos</span>
+                            <div class="endpoint-description">Get all todos</div>
+                        </div>
+                        
+                        <div class="endpoint-item" data-endpoint="/categories" data-method="GET">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-path">/categories</span>
+                            <div class="endpoint-description">Get all categories</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Request Builder -->
+            <div class="api-section">
+                <h2 class="section-title">API Request Builder</h2>
+                <p class="section-description">Build and send custom API requests with parameters and headers</p>
+                
+                <div class="demo-container">
+                    <h3>Custom Request Testing</h3>
+                    <p>Create custom API requests with different methods, headers, and body content.</p>
+                    
+                    <div class="api-form">
+                        <div class="form-group">
+                            <label>HTTP Method</label>
+                            <div class="method-selector">
+                                <button class="method-btn active" data-method="GET">GET</button>
+                                <button class="method-btn" data-method="POST">POST</button>
+                                <button class="method-btn" data-method="PUT">PUT</button>
+                                <button class="method-btn" data-method="DELETE">DELETE</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="endpointUrl">Endpoint URL</label>
+                            <input type="text" id="endpointUrl" class="form-control" placeholder="/users" value="/users">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="requestHeaders">Headers (JSON format)</label>
+                            <textarea id="requestHeaders" class="form-control" rows="3" placeholder='{"Content-Type": "application/json"}'>{"Content-Type": "application/json"}</textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="requestBody">Request Body (JSON format)</label>
+                            <textarea id="requestBody" class="form-control" rows="4" placeholder='{"name": "John Doe", "email": "john@example.com"}'></textarea>
+                        </div>
+                        
+                        <div class="controls">
+                            <button id="btnSendRequest" class="btn btn-primary">Send Request</button>
+                            <button id="btnClearForm" class="btn btn-secondary">Clear Form</button>
+                        </div>
+                    </div>
+                    
+                    <div class="loading-spinner" id="apiLoader">
+                        <div class="spinner"></div>
+                        <p>Sending API request...</p>
+                    </div>
+                    
+                    <div class="response-area">
+                        <div class="response-header">
+                            <h4>Response</h4>
+                            <span id="responseStatus" class="response-status status-info">Ready</span>
+                        </div>
+                        <div id="responseContent" class="response-content">
+                            Click "Send Request" or select an endpoint above to see the response...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Testing Scenarios -->
+            <div class="api-section">
+                <h2 class="section-title">API Testing Scenarios</h2>
+                <p class="section-description">Pre-configured API testing scenarios for common use cases</p>
+                
+                <div class="demo-container">
+                    <h3>Common API Testing Patterns</h3>
+                    <p>Test common API scenarios like pagination, filtering, error handling, and more.</p>
+                    
+                    <div class="controls">
+                        <button id="btnTestPagination" class="btn btn-success">Test Pagination</button>
+                        <button id="btnTestFiltering" class="btn btn-primary">Test Filtering</button>
+                        <button id="btnTestErrorHandling" class="btn btn-danger">Test Error Handling</button>
+                        <button id="btnTestAuthentication" class="btn btn-warning">Test Authentication</button>
+                    </div>
+                    
+                    <div class="response-area">
+                        <div class="response-header">
+                            <h4>Scenario Results</h4>
+                            <span id="scenarioStatus" class="response-status status-info">Ready</span>
+                        </div>
+                        <div id="scenarioContent" class="response-content">
+                            Select a scenario above to see the test results...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Monitor -->
+            <div class="api-section">
+                <h2 class="section-title">API Activity Monitor</h2>
+                <p class="section-description">Real-time API request and response monitoring</p>
+                
+                <div class="demo-container">
+                    <h3>Activity Monitor</h3>
+                    <p>Monitor all API activities and their status in real-time.</p>
+                    
+                    <div class="controls">
+                        <button id="btnClearApiLog" class="btn btn-warning">Clear Log</button>
+                    </div>
+                    
+                    <div class="status-panel">
+                        <h5>API Status</h5>
+                        <div id="apiStatusContent" class="status-content">
+                            <div>✓ API Testing page loaded successfully</div>
+                            <div>⏳ Ready for API testing operations</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <a href="../index.html" class="back-link">← Back to Home</a>
+        </main>
+    </div>
+
+    <script>
+        // Mock API data
+        const mockData = {
+            users: [
+                { id: 1, name: "John Doe", username: "johndoe", email: "john.doe@example.com", phone: "1-770-736-8031", website: "johndoe.com" },
+                { id: 2, name: "Jane Smith", username: "janesmith", email: "jane.smith@example.com", phone: "1-123-456-7890", website: "janesmith.net" },
+                { id: 3, name: "Bob Johnson", username: "bobjohnson", email: "bob.johnson@example.com", phone: "1-987-654-3210", website: "bobjohnson.tech" }
+            ],
+            posts: [
+                { id: 1, userId: 1, title: "Introduction to Web Testing", body: "Web testing is a critical part of the software development lifecycle..." },
+                { id: 2, userId: 2, title: "Advanced CSS Techniques", body: "CSS has evolved significantly over the years..." },
+                { id: 3, userId: 3, title: "JavaScript Best Practices", body: "JavaScript is the language of the web..." }
+            ],
+            comments: [
+                { id: 1, postId: 1, name: "Alice Cooper", email: "alice.cooper@example.com", body: "Great introduction to web testing!" },
+                { id: 2, postId: 1, name: "Bob Martin", email: "bob.martin@example.com", body: "Very comprehensive post." },
+                { id: 3, postId: 2, name: "Carol White", email: "carol.white@example.com", body: "The CSS Grid examples are fantastic!" }
+            ],
+            products: [
+                { id: 1, name: "Laptop Pro", category: "Electronics", price: 1299.99, description: "High-performance laptop with 16GB RAM" },
+                { id: 2, name: "Wireless Headphones", category: "Audio", price: 199.99, description: "Premium noise-cancelling headphones" },
+                { id: 3, name: "Smart Watch", category: "Wearables", price: 349.99, description: "Advanced fitness tracking" }
+            ],
+            todos: [
+                { id: 1, title: "Complete project documentation", completed: false, priority: "high" },
+                { id: 2, title: "Fix login authentication bug", completed: true, priority: "high" },
+                { id: 3, title: "Optimize database queries", completed: false, priority: "medium" }
+            ],
+            categories: [
+                { id: 1, name: "Electronics", description: "Electronic devices and gadgets" },
+                { id: 2, name: "Audio", description: "Audio equipment and headphones" },
+                { id: 3, name: "Wearables", description: "Smart watches and fitness trackers" }
+            ]
+        };
+
+        // Status management
+        function addApiStatus(message, type = 'info') {
+            const statusContent = document.getElementById('apiStatusContent');
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = type === 'success' ? '✓' : type === 'error' ? '✗' : type === 'request' ? '🔌' : '•';
+            
+            const statusEntry = document.createElement('div');
+            statusEntry.textContent = `${icon} [${timestamp}] ${message}`;
+            statusContent.appendChild(statusEntry);
+            
+            // Keep only last 10 status entries
+            while (statusContent.children.length > 10) {
+                statusContent.removeChild(statusContent.firstChild);
+            }
+        }
+
+        // Mock API request function
+        function mockApiRequest(method, endpoint, headers = {}, body = null) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    try {
+                        const endpointKey = endpoint.replace('/', '');
+                        let data = mockData[endpointKey];
+                        
+                        // Handle different methods
+                        if (method === 'GET') {
+                            if (data) {
+                                resolve({
+                                    status: 200,
+                                    statusText: 'OK',
+                                    data: data,
+                                    headers: { 'Content-Type': 'application/json' }
+                                });
+                            } else {
+                                resolve({
+                                    status: 404,
+                                    statusText: 'Not Found',
+                                    data: { error: 'Endpoint not found' },
+                                    headers: { 'Content-Type': 'application/json' }
+                                });
+                            }
+                        } else if (method === 'POST') {
+                            if (endpoint === '/users' && body) {
+                                const newUser = { id: data.length + 1, ...body };
+                                data.push(newUser);
+                                resolve({
+                                    status: 201,
+                                    statusText: 'Created',
+                                    data: newUser,
+                                    headers: { 'Content-Type': 'application/json' }
+                                });
+                            } else {
+                                resolve({
+                                    status: 400,
+                                    statusText: 'Bad Request',
+                                    data: { error: 'Invalid request data' },
+                                    headers: { 'Content-Type': 'application/json' }
+                                });
+                            }
+                        } else if (method === 'PUT') {
+                            resolve({
+                                status: 200,
+                                statusText: 'OK',
+                                data: { message: 'Resource updated successfully' },
+                                headers: { 'Content-Type': 'application/json' }
+                            });
+                        } else if (method === 'DELETE') {
+                            resolve({
+                                status: 204,
+                                statusText: 'No Content',
+                                data: null,
+                                headers: { 'Content-Type': 'application/json' }
+                            });
+                        }
+                    } catch (error) {
+                        reject({
+                            status: 500,
+                            statusText: 'Internal Server Error',
+                            data: { error: 'Server error occurred' },
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                    }
+                }, 1000 + Math.random() * 1000); // Random delay 1-2 seconds
+            });
+        }
+
+        // Endpoint selection
+        let selectedEndpoint = '/users';
+        let selectedMethod = 'GET';
+
+        document.querySelectorAll('.endpoint-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.endpoint-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                selectedEndpoint = this.dataset.endpoint;
+                selectedMethod = this.dataset.method;
+                
+                document.getElementById('endpointUrl').value = selectedEndpoint;
+                
+                // Update method buttons
+                document.querySelectorAll('.method-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.method === selectedMethod) {
+                        btn.classList.add('active');
+                    }
+                });
+                
+                addApiStatus(`Selected endpoint: ${selectedMethod} ${selectedEndpoint}`, 'request');
+            });
+        });
+
+        // Method selection
+        document.querySelectorAll('.method-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedMethod = this.dataset.method;
+            });
+        });
+
+        // Send request
+        document.getElementById('btnSendRequest').addEventListener('click', async function() {
+            const endpoint = document.getElementById('endpointUrl').value;
+            const headersText = document.getElementById('requestHeaders').value;
+            const bodyText = document.getElementById('requestBody').value;
+            
+            let headers = {};
+            let body = null;
+            
+            try {
+                headers = headersText ? JSON.parse(headersText) : {};
+                body = bodyText ? JSON.parse(bodyText) : null;
+            } catch (error) {
+                updateResponse('error', 'Invalid JSON format in headers or body');
+                addApiStatus('Invalid JSON format', 'error');
+                return;
+            }
+            
+            const loader = document.getElementById('apiLoader');
+            const responseContent = document.getElementById('responseContent');
+            
+            loader.classList.add('active');
+            responseContent.style.display = 'none';
+            
+            addApiStatus(`Sending ${selectedMethod} request to ${endpoint}...`, 'request');
+            
+            try {
+                const response = await mockApiRequest(selectedMethod, endpoint, headers, body);
+                
+                loader.classList.remove('active');
+                responseContent.style.display = 'block';
+                
+                updateResponse(response.status, JSON.stringify(response, null, 2));
+                addApiStatus(`Request successful: ${response.status} ${response.statusText}`, 'success');
+                
+            } catch (error) {
+                loader.classList.remove('active');
+                responseContent.style.display = 'block';
+                
+                updateResponse(error.status, JSON.stringify(error, null, 2));
+                addApiStatus(`Request failed: ${error.status} ${error.statusText}`, 'error');
+            }
+        });
+
+        function updateResponse(status, content) {
+            const responseStatus = document.getElementById('responseStatus');
+            const responseContent = document.getElementById('responseContent');
+            
+            responseStatus.textContent = status;
+            responseStatus.className = 'response-status';
+            
+            if (status >= 200 && status < 300) {
+                responseStatus.classList.add('status-success');
+            } else if (status >= 400) {
+                responseStatus.classList.add('status-error');
+            } else {
+                responseStatus.classList.add('status-info');
+            }
+            
+            responseContent.textContent = content;
+        }
+
+        // Clear form
+        document.getElementById('btnClearForm').addEventListener('click', function() {
+            document.getElementById('endpointUrl').value = '/users';
+            document.getElementById('requestHeaders').value = '{"Content-Type": "application/json"}';
+            document.getElementById('requestBody').value = '';
+            
+            document.getElementById('responseContent').textContent = 'Click "Send Request" or select an endpoint above to see the response...';
+            document.getElementById('responseStatus').textContent = 'Ready';
+            document.getElementById('responseStatus').className = 'response-status status-info';
+            
+            addApiStatus('Form cleared', 'info');
+        });
+
+        // Testing scenarios
+        document.getElementById('btnTestPagination').addEventListener('click', async function() {
+            const scenarioContent = document.getElementById('scenarioContent');
+            const scenarioStatus = document.getElementById('scenarioStatus');
+            
+            scenarioContent.textContent = 'Testing pagination scenario...';
+            scenarioStatus.textContent = 'Testing';
+            scenarioStatus.className = 'response-status status-info';
+            
+            addApiStatus('Testing pagination scenario', 'request');
+            
+            // Simulate pagination test
+            setTimeout(() => {
+                const result = {
+                    scenario: 'Pagination Test',
+                    status: 'Success',
+                    details: {
+                        page: 1,
+                        limit: 10,
+                        total: 25,
+                        totalPages: 3,
+                        data: mockData.users.slice(0, 10)
+                    }
+                };
+                
+                scenarioContent.textContent = JSON.stringify(result, null, 2);
+                scenarioStatus.textContent = 'Success';
+                scenarioStatus.className = 'response-status status-success';
+                
+                addApiStatus('Pagination test completed successfully', 'success');
+            }, 1500);
+        });
+
+        document.getElementById('btnTestFiltering').addEventListener('click', async function() {
+            const scenarioContent = document.getElementById('scenarioContent');
+            const scenarioStatus = document.getElementById('scenarioStatus');
+            
+            scenarioContent.textContent = 'Testing filtering scenario...';
+            scenarioStatus.textContent = 'Testing';
+            scenarioStatus.className = 'response-status status-info';
+            
+            addApiStatus('Testing filtering scenario', 'request');
+            
+            setTimeout(() => {
+                const result = {
+                    scenario: 'Filtering Test',
+                    status: 'Success',
+                    details: {
+                        filter: { category: 'Electronics' },
+                        results: mockData.products.filter(p => p.category === 'Electronics'),
+                        totalResults: 1
+                    }
+                };
+                
+                scenarioContent.textContent = JSON.stringify(result, null, 2);
+                scenarioStatus.textContent = 'Success';
+                scenarioStatus.className = 'response-status status-success';
+                
+                addApiStatus('Filtering test completed successfully', 'success');
+            }, 1500);
+        });
+
+        document.getElementById('btnTestErrorHandling').addEventListener('click', async function() {
+            const scenarioContent = document.getElementById('scenarioContent');
+            const scenarioStatus = document.getElementById('scenarioStatus');
+            
+            scenarioContent.textContent = 'Testing error handling scenario...';
+            scenarioStatus.textContent = 'Testing';
+            scenarioStatus.className = 'response-status status-info';
+            
+            addApiStatus('Testing error handling scenario', 'request');
+            
+            setTimeout(() => {
+                const result = {
+                    scenario: 'Error Handling Test',
+                    status: 'Error',
+                    details: {
+                        endpoint: '/nonexistent',
+                        method: 'GET',
+                        error: 'Endpoint not found',
+                        statusCode: 404,
+                        message: 'The requested resource was not found'
+                    }
+                };
+                
+                scenarioContent.textContent = JSON.stringify(result, null, 2);
+                scenarioStatus.textContent = 'Error';
+                scenarioStatus.className = 'response-status status-error';
+                
+                addApiStatus('Error handling test completed', 'success');
+            }, 1500);
+        });
+
+        document.getElementById('btnTestAuthentication').addEventListener('click', async function() {
+            const scenarioContent = document.getElementById('scenarioContent');
+            const scenarioStatus = document.getElementById('scenarioStatus');
+            
+            scenarioContent.textContent = 'Testing authentication scenario...';
+            scenarioStatus.textContent = 'Testing';
+            scenarioStatus.className = 'response-status status-info';
+            
+            addApiStatus('Testing authentication scenario', 'request');
+            
+            setTimeout(() => {
+                const result = {
+                    scenario: 'Authentication Test',
+                    status: 'Success',
+                    details: {
+                        authenticated: true,
+                        user: { id: 1, name: 'John Doe', role: 'admin' },
+                        token: 'mock-jwt-token-12345',
+                        permissions: ['read', 'write', 'delete']
+                    }
+                };
+                
+                scenarioContent.textContent = JSON.stringify(result, null, 2);
+                scenarioStatus.textContent = 'Success';
+                scenarioStatus.className = 'response-status status-success';
+                
+                addApiStatus('Authentication test completed successfully', 'success');
+            }, 1500);
+        });
+
+        document.getElementById('btnClearApiLog').addEventListener('click', function() {
+            document.getElementById('apiStatusContent').innerHTML = '<div>✓ API status log cleared</div>';
+        });
+
+        // Initialize
+        addApiStatus('API Testing page initialized successfully', 'success');
+    </script>
+</body>
+</html>

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buttons - QA Training Site</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .button-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .button-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .button-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .button-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .button-card h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover:not(:disabled) {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #6c757d;
+        }
+
+        .btn-countdown {
+            position: relative;
+        }
+
+        .countdown-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(108, 117, 125, 0.8);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .event-log {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e3f2fd;
+            border-radius: 12px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .event-log h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .log-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .log-click {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .log-double {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .log-right {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .log-disabled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .log-enabled {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: -20px;
+                border-radius: 0;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .button-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎯 Buttons Testing</h1>
+            <p>Comprehensive button interactions and event handling for automation testing</p>
+        </header>
+        
+        <main class="main-content">
+            <div class="button-section">
+                <h2>Basic Button Interactions</h2>
+                <div class="button-grid">
+                    <div class="button-card">
+                        <h3>Single Click</h3>
+                        <button id="btnClick" class="btn btn-primary">Click Me</button>
+                        <p>Simple click interaction</p>
+                    </div>
+
+                    <div class="button-card">
+                        <h3>Double Click</h3>
+                        <button id="btnDouble" class="btn btn-success">Double Click Me</button>
+                        <p>Requires double-click</p>
+                    </div>
+
+                    <div class="button-card">
+                        <h3>Right Click</h3>
+                        <button id="btnRight" class="btn btn-warning">Right Click Me</button>
+                        <p>Context menu interaction</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-section">
+                <h2>Button States</h2>
+                <div class="button-grid">
+                    <div class="button-card">
+                        <h3>Disabled Button</h3>
+                        <button id="btnDisabled" class="btn btn-danger" disabled>I'm Disabled</button>
+                        <p>Cannot be clicked</p>
+                    </div>
+
+                    <div class="button-card">
+                        <h3>Timed Enable (5s)</h3>
+                        <div style="position: relative; display: inline-block;">
+                            <button id="btnTimed" class="btn btn-info" disabled>
+                                Enable in <span id="countdown">5</span>s
+                            </button>
+                        </div>
+                        <p>Enables after countdown</p>
+                    </div>
+
+                    <div class="button-card">
+                        <h3>Toggle Button</h3>
+                        <button id="btnToggle" class="btn btn-primary">OFF</button>
+                        <p>Click to toggle state</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-section">
+                <h2>Advanced Interactions</h2>
+                <div class="button-grid">
+                    <div class="button-card">
+                        <h3>Counter Button</h3>
+                        <button id="btnCounter" class="btn btn-success">Click Count: 0</button>
+                        <p>Tracks click count</p>
+                    </div>
+
+                    <div class="button-card">
+                        <h3>Color Changer</h3>
+                        <button id="btnColor" class="btn btn-primary">Change Color</button>
+                        <p>Cycles through colors</p>
+                    </div>
+
+                    <div class="button-card">
+                        <h3>Reset All</h3>
+                        <button id="btnReset" class="btn btn-danger">Reset Everything</button>
+                        <p>Resets all buttons</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="event-log">
+                <h3>📋 Event Log</h3>
+                <div class="log-content" id="logContent">
+                    <div class="log-entry">Waiting for button interactions...</div>
+                </div>
+            </div>
+
+            <a href="../index.html" class="back-link">← Back to Home</a>
+        </main>
+    </div>
+
+    <script>
+        // Event logging
+        function logEvent(message, type = 'log-click') {
+            const logContent = document.getElementById('logContent');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            
+            logContent.appendChild(entry);
+            logContent.scrollTop = logContent.scrollHeight;
+            
+            // Keep only last 20 entries
+            while (logContent.children.length > 20) {
+                logContent.removeChild(logContent.firstChild);
+            }
+        }
+
+        // Single Click
+        document.getElementById('btnClick').addEventListener('click', function() {
+            logEvent('Single click button clicked', 'log-click');
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 100);
+        });
+
+        // Double Click
+        document.getElementById('btnDouble').addEventListener('dblclick', function() {
+            logEvent('Double click button double-clicked', 'log-double');
+            alert('Double click successful!');
+        });
+
+        // Right Click
+        document.getElementById('btnRight').addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            logEvent('Right click button right-clicked', 'log-right');
+            alert('Right click successful!');
+        });
+
+        // Disabled Button (prevent clicks)
+        document.getElementById('btnDisabled').addEventListener('click', function() {
+            logEvent('Disabled button clicked (should not happen)', 'log-disabled');
+        });
+
+        // Timed Enable Button
+        let countdown = 5;
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            document.getElementById('countdown').textContent = countdown;
+            
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                const btnTimed = document.getElementById('btnTimed');
+                btnTimed.disabled = false;
+                btnTimed.textContent = 'Now Enabled!';
+                btnTimed.classList.remove('btn-info');
+                btnTimed.classList.add('btn-success');
+                logEvent('Timed button enabled after countdown', 'log-enabled');
+            }
+        }, 1000);
+
+        document.getElementById('btnTimed').addEventListener('click', function() {
+            if (!this.disabled) {
+                logEvent('Timed button clicked after being enabled', 'log-click');
+            }
+        });
+
+        // Toggle Button
+        let toggleState = false;
+        document.getElementById('btnToggle').addEventListener('click', function() {
+            toggleState = !toggleState;
+            this.textContent = toggleState ? 'ON' : 'OFF';
+            this.classList.toggle('btn-success');
+            this.classList.toggle('btn-primary');
+            logEvent(`Toggle button switched to ${toggleState ? 'ON' : 'OFF'}`, 'log-click');
+        });
+
+        // Counter Button
+        let clickCount = 0;
+        document.getElementById('btnCounter').addEventListener('click', function() {
+            clickCount++;
+            this.textContent = `Click Count: ${clickCount}`;
+            logEvent(`Counter button clicked. Total count: ${clickCount}`, 'log-click');
+        });
+
+        // Color Changer Button
+        const colors = ['#667eea', '#28a745', '#ffc107', '#dc3545', '#17a2b8', '#6f42c1'];
+        let colorIndex = 0;
+        document.getElementById('btnColor').addEventListener('click', function() {
+            colorIndex = (colorIndex + 1) % colors.length;
+            this.style.background = colors[colorIndex];
+            logEvent(`Color changed to ${colors[colorIndex]}`, 'log-click');
+        });
+
+        // Reset Button
+        document.getElementById('btnReset').addEventListener('click', function() {
+            // Reset counter
+            clickCount = 0;
+            document.getElementById('btnCounter').textContent = 'Click Count: 0';
+            
+            // Reset toggle
+            toggleState = false;
+            const btnToggle = document.getElementById('btnToggle');
+            btnToggle.textContent = 'OFF';
+            btnToggle.classList.add('btn-primary');
+            btnToggle.classList.remove('btn-success');
+            
+            // Reset color
+            colorIndex = 0;
+            document.getElementById('btnColor').style.background = '';
+            
+            // Clear log
+            document.getElementById('logContent').innerHTML = '<div class="log-entry">All buttons reset. Waiting for interactions...</div>';
+            
+            logEvent('All buttons have been reset', 'log-click');
+        });
+
+        // Prevent context menu on the whole page for right-click testing
+        document.addEventListener('contextmenu', function(e) {
+            if (e.target.id !== 'btnRight') {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

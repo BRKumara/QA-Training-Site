@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forms - QA Training Site</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .form-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .radio-group, .checkbox-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .radio-item, .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .result-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e3f2fd;
+            border-radius: 12px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .result-section h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .result-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: -20px;
+                border-radius: 0;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📝 Forms Testing</h1>
+            <p>Comprehensive form elements and validation scenarios for automation testing</p>
+        </header>
+        
+        <main class="main-content">
+            <form id="testForm">
+                <div class="form-section">
+                    <h2>Basic Input Fields</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="txtName">Full Name</label>
+                            <input type="text" id="txtName" name="txtName" class="form-control" placeholder="Enter your full name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="txtEmail">Email Address</label>
+                            <input type="email" id="txtEmail" name="txtEmail" class="form-control" placeholder="email@example.com" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="txtPhone">Phone Number</label>
+                            <input type="tel" id="txtPhone" name="txtPhone" class="form-control" placeholder="+1-555-0123">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="txtPassword">Password</label>
+                            <input type="password" id="txtPassword" name="txtPassword" class="form-control" placeholder="Enter password" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="txtNumber">Number</label>
+                            <input type="number" id="txtNumber" name="txtNumber" class="form-control" placeholder="123" min="0" max="1000">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="txtDate">Date</label>
+                            <input type="date" id="txtDate" name="txtDate" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Selection Elements</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="ddlCountry">Country</label>
+                            <select id="ddlCountry" name="ddlCountry" class="form-control">
+                                <option value="">Select a country</option>
+                                <option value="us">United States</option>
+                                <option value="uk">United Kingdom</option>
+                                <option value="ca">Canada</option>
+                                <option value="au">Australia</option>
+                                <option value="in">India</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="ddlMultiSkills">Skills (Multiple)</label>
+                            <select id="ddlMultiSkills" name="ddlMultiSkills" class="form-control" multiple size="4">
+                                <option value="javascript">JavaScript</option>
+                                <option value="python">Python</option>
+                                <option value="java">Java</option>
+                                <option value="csharp">C#</option>
+                                <option value="playwright">Playwright</option>
+                                <option value="selenium">Selenium</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Radio Buttons</h2>
+                    <div class="form-group">
+                        <label>Experience Level</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="rbBeginner" name="experience" value="beginner">
+                                <label for="rbBeginner">Beginner</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="rbIntermediate" name="experience" value="intermediate" checked>
+                                <label for="rbIntermediate">Intermediate</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="rbAdvanced" name="experience" value="advanced">
+                                <label for="rbAdvanced">Advanced</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Checkboxes</h2>
+                    <div class="form-group">
+                        <label>Interests</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cbAutomation" name="interests" value="automation" checked>
+                                <label for="cbAutomation">Automation Testing</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cbManual" name="interests" value="manual">
+                                <label for="cbManual">Manual Testing</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cbPerformance" name="interests" value="performance">
+                                <label for="cbPerformance">Performance Testing</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cbSecurity" name="interests" value="security">
+                                <label for="cbSecurity">Security Testing</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Text Area</h2>
+                    <div class="form-group">
+                        <label for="txtComments">Comments</label>
+                        <textarea id="txtComments" name="txtComments" class="form-control" rows="4" placeholder="Enter your comments here..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>File Upload</h2>
+                    <div class="form-group">
+                        <label for="fileUpload">Upload File</label>
+                        <input type="file" id="fileUpload" name="fileUpload" class="form-control" accept=".txt,.pdf,.doc,.docx">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Submit Form</button>
+                    <button type="reset" class="btn btn-secondary">Reset Form</button>
+                </div>
+            </form>
+
+            <div class="result-section" id="resultSection" style="display: none;">
+                <h3>📋 Form Data Submitted</h3>
+                <div class="result-content" id="resultContent"></div>
+            </div>
+
+            <a href="../index.html" class="back-link">← Back to Home</a>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {};
+            
+            // Get all form data
+            for (let [key, value] of formData.entries()) {
+                if (data[key]) {
+                    // Handle multiple values (checkboxes, multi-select)
+                    if (Array.isArray(data[key])) {
+                        data[key].push(value);
+                    } else {
+                        data[key] = [data[key], value];
+                    }
+                } else {
+                    data[key] = value;
+                }
+            }
+            
+            // Get unchecked checkboxes
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:not(:checked)');
+            checkboxes.forEach(cb => {
+                if (!data[cb.name]) {
+                    data[cb.name] = [];
+                }
+            });
+            
+            // Display results
+            const resultContent = document.getElementById('resultContent');
+            resultContent.innerHTML = JSON.stringify(data, null, 2);
+            
+            // Show result section
+            document.getElementById('resultSection').style.display = 'block';
+            
+            // Scroll to results
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Add real-time validation feedback
+        document.getElementById('txtEmail').addEventListener('blur', function() {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (this.value && !emailRegex.test(this.value)) {
+                this.style.borderColor = '#dc3545';
+            } else {
+                this.style.borderColor = '#28a745';
+            }
+        });
+
+        // Character counter for textarea
+        const textarea = document.getElementById('txtComments');
+        textarea.addEventListener('input', function() {
+            const charCount = this.value.length;
+            if (charCount > 500) {
+                this.style.borderColor = '#dc3545';
+            } else {
+                this.style.borderColor = '#e9ecef';
+            }
+        });
+    </script>
+</body>
+</html>

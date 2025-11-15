@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iframes - QA Training Site</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .iframe-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .iframe-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .iframe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .iframe-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .iframe-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .iframe-card.active {
+            border: 3px solid #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .iframe-header {
+            background: #495057;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .iframe-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .iframe-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .iframe-container {
+            position: relative;
+            background: #f8f9fa;
+            min-height: 300px;
+        }
+
+        .iframe-content {
+            width: 100%;
+            height: 300px;
+            border: none;
+            display: block;
+        }
+
+        .iframe-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .iframe-overlay.show {
+            opacity: 1;
+        }
+
+        .size-controls {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .size-controls h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .size-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .size-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .size-group label {
+            font-weight: 500;
+            color: #495057;
+            min-width: 80px;
+        }
+
+        .size-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .event-log {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e3f2fd;
+            border-radius: 12px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .event-log h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .log-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .log-load {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .log-unload {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .log-control {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .log-size {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: -20px;
+                border-radius: 0;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .iframe-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🖼️ Iframes Testing</h1>
+            <p>Frame switching, multiple iframes, and content loading scenarios</p>
+        </header>
+        
+        <main class="main-content">
+            <div class="size-controls">
+                <h3>🔧 Global Frame Controls</h3>
+                <div class="size-grid">
+                    <div class="size-group">
+                        <label>Height:</label>
+                        <input type="number" id="globalHeight" class="size-input" value="300" min="100" max="600">
+                        <button class="btn btn-primary" onclick="resizeAllFrames()">Apply</button>
+                    </div>
+                    <div class="size-group">
+                        <label>Active:</label>
+                        <select id="activeFrame" class="size-input">
+                            <option value="frame1">Frame 1 - Forms</option>
+                            <option value="frame2">Frame 2 - Buttons</option>
+                            <option value="frame3">Frame 3 - Alerts</option>
+                            <option value="frame4">Frame 4 - External</option>
+                        </select>
+                        <button class="btn btn-success" onclick="setActiveFrame()">Set Active</button>
+                    </div>
+                    <div class="size-group">
+                        <label>Actions:</label>
+                        <button class="btn btn-warning" onclick="reloadAllFrames()">Reload All</button>
+                        <button class="btn btn-danger" onclick="clearAllFrames()">Clear All</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="iframe-section">
+                <h2>Frame Collection</h2>
+                <div class="iframe-grid">
+                    <div class="iframe-card" id="card-frame1">
+                        <div class="iframe-header">
+                            <div class="iframe-title">Frame 1 - Forms Page</div>
+                            <div class="iframe-controls">
+                                <button class="control-btn" onclick="reloadFrame('frame1')">Reload</button>
+                                <button class="control-btn" onclick="resizeFrame('frame1')">Resize</button>
+                                <button class="control-btn" onclick="clearFrame('frame1')">Clear</button>
+                            </div>
+                        </div>
+                        <div class="iframe-container">
+                            <iframe id="frame1" class="iframe-content" src="../forms/index.html"></iframe>
+                            <div class="iframe-overlay" id="overlay-frame1">Frame 1 Active</div>
+                        </div>
+                    </div>
+
+                    <div class="iframe-card" id="card-frame2">
+                        <div class="iframe-header">
+                            <div class="iframe-title">Frame 2 - Buttons Page</div>
+                            <div class="iframe-controls">
+                                <button class="control-btn" onclick="reloadFrame('frame2')">Reload</button>
+                                <button class="control-btn" onclick="resizeFrame('frame2')">Resize</button>
+                                <button class="control-btn" onclick="clearFrame('frame2')">Clear</button>
+                            </div>
+                        </div>
+                        <div class="iframe-container">
+                            <iframe id="frame2" class="iframe-content" src="../buttons/index.html"></iframe>
+                            <div class="iframe-overlay" id="overlay-frame2">Frame 2 Active</div>
+                        </div>
+                    </div>
+
+                    <div class="iframe-card" id="card-frame3">
+                        <div class="iframe-header">
+                            <div class="iframe-title">Frame 3 - Alerts Page</div>
+                            <div class="iframe-controls">
+                                <button class="control-btn" onclick="reloadFrame('frame3')">Reload</button>
+                                <button class="control-btn" onclick="resizeFrame('frame3')">Resize</button>
+                                <button class="control-btn" onclick="clearFrame('frame3')">Clear</button>
+                            </div>
+                        </div>
+                        <div class="iframe-container">
+                            <iframe id="frame3" class="iframe-content" src="../alerts/index.html"></iframe>
+                            <div class="iframe-overlay" id="overlay-frame3">Frame 3 Active</div>
+                        </div>
+                    </div>
+
+                    <div class="iframe-card" id="card-frame4">
+                        <div class="iframe-header">
+                            <div class="iframe-title">Frame 4 - External Site</div>
+                            <div class="iframe-controls">
+                                <button class="control-btn" onclick="reloadFrame('frame4')">Reload</button>
+                                <button class="control-btn" onclick="resizeFrame('frame4')">Resize</button>
+                                <button class="control-btn" onclick="clearFrame('frame4')">Clear</button>
+                            </div>
+                        </div>
+                        <div class="iframe-container">
+                            <iframe id="frame4" class="iframe-content" src="https://example.com"></iframe>
+                            <div class="iframe-overlay" id="overlay-frame4">Frame 4 Active</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="event-log">
+                <h3>📋 Frame Event Log</h3>
+                <div class="log-content" id="logContent">
+                    <div class="log-entry">Waiting for frame interactions...</div>
+                </div>
+            </div>
+
+            <a href="../index.html" class="back-link">← Back to Home</a>
+        </main>
+    </div>
+
+    <script>
+        let activeFrameId = 'frame1';
+        let frameLoadCounters = {};
+
+        // Event logging
+        function logEvent(message, type = 'log-load') {
+            const logContent = document.getElementById('logContent');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            
+            logContent.appendChild(entry);
+            logContent.scrollTop = logContent.scrollHeight;
+            
+            // Keep only last 20 entries
+            while (logContent.children.length > 20) {
+                logContent.removeChild(logContent.firstChild);
+            }
+        }
+
+        // Initialize frame load counters
+        function initializeFrameCounters() {
+            ['frame1', 'frame2', 'frame3', 'frame4'].forEach(frameId => {
+                frameLoadCounters[frameId] = 0;
+            });
+        }
+
+        // Set active frame
+        function setActiveFrame() {
+            const selectedFrame = document.getElementById('activeFrame').value;
+            
+            // Remove active class from all frames
+            document.querySelectorAll('.iframe-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Hide all overlays
+            document.querySelectorAll('.iframe-overlay').forEach(overlay => {
+                overlay.classList.remove('show');
+            });
+            
+            // Set new active frame
+            document.getElementById(`card-${selectedFrame}`).classList.add('active');
+            document.getElementById(`overlay-${selectedFrame}`).classList.add('show');
+            
+            activeFrameId = selectedFrame;
+            logEvent(`Active frame set to ${selectedFrame}`, 'log-control');
+        }
+
+        // Reload individual frame
+        function reloadFrame(frameId) {
+            const frame = document.getElementById(frameId);
+            const src = frame.src;
+            frame.src = '';
+            setTimeout(() => {
+                frame.src = src;
+                logEvent(`Frame ${frameId} reloaded`, 'log-control');
+            }, 100);
+        }
+
+        // Resize individual frame
+        function resizeFrame(frameId) {
+            const frame = document.getElementById(frameId);
+            const currentHeight = frame.style.height || '300px';
+            const newHeight = currentHeight === '300px' ? '400px' : '300px';
+            frame.style.height = newHeight;
+            logEvent(`Frame ${frameId} resized to ${newHeight}`, 'log-size');
+        }
+
+        // Clear individual frame
+        function clearFrame(frameId) {
+            const frame = document.getElementById(frameId);
+            frame.src = 'about:blank';
+            logEvent(`Frame ${frameId} cleared`, 'log-control');
+        }
+
+        // Resize all frames
+        function resizeAllFrames() {
+            const height = document.getElementById('globalHeight').value;
+            document.querySelectorAll('.iframe-content').forEach(frame => {
+                frame.style.height = height + 'px';
+            });
+            logEvent(`All frames resized to ${height}px`, 'log-size');
+        }
+
+        // Reload all frames
+        function reloadAllFrames() {
+            ['frame1', 'frame2', 'frame3', 'frame4'].forEach(frameId => {
+                const frame = document.getElementById(frameId);
+                const src = frame.src;
+                frame.src = '';
+                setTimeout(() => {
+                    frame.src = src;
+                }, 100);
+            });
+            logEvent('All frames reloaded', 'log-control');
+        }
+
+        // Clear all frames
+        function clearAllFrames() {
+            document.querySelectorAll('.iframe-content').forEach(frame => {
+                frame.src = 'about:blank';
+            });
+            logEvent('All frames cleared', 'log-control');
+        }
+
+        // Frame load event listeners
+        function setupFrameListeners() {
+            ['frame1', 'frame2', 'frame3', 'frame4'].forEach(frameId => {
+                const frame = document.getElementById(frameId);
+                
+                frame.addEventListener('load', function() {
+                    frameLoadCounters[frameId]++;
+                    logEvent(`Frame ${frameId} loaded (load #${frameLoadCounters[frameId]})`, 'log-load');
+                });
+                
+                frame.addEventListener('unload', function() {
+                    logEvent(`Frame ${frameId} unloaded`, 'log-unload');
+                });
+            });
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFrameCounters();
+            setupFrameListeners();
+            setActiveFrame(); // Set first frame as active
+            logEvent('Iframes page loaded and ready for testing', 'log-load');
+        });
+
+        // Handle frame selection change
+        document.getElementById('activeFrame').addEventListener('change', setActiveFrame);
+    </script>
+</body>
+</html>

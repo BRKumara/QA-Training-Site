@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tables - QA Training Site</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .table-controls {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .table-controls h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .search-input {
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .table-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .table-header {
+            background: #495057;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .table-info {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.3s ease;
+        }
+
+        .data-table th:hover {
+            background: #e9ecef;
+        }
+
+        .data-table th.sorted-asc::after {
+            content: ' ';
+            color: #667eea;
+        }
+
+        .data-table th.sorted-desc::after {
+            content: ' ';
+            color: #667eea;
+        }
+
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+            color: #495057;
+        }
+
+        .data-table tr {
+            transition: background 0.3s ease;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .data-table tr.selected {
+            background: #e3f2fd;
+            border-left: 3px solid #2196f3;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .action-edit {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .action-edit:hover {
+            background: #138496;
+        }
+
+        .action-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .action-delete:hover {
+            background: #c82333;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .page-btn {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            background: white;
+            color: #495057;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover {
+            background: #e9ecef;
+        }
+
+        .page-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .event-log {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e3f2fd;
+            border-radius: 12px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .event-log h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .log-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .log-sort {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .log-search {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .log-select {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .log-action {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: -20px;
+                border-radius: 0;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-container {
+                font-size: 14px;
+            }
+            
+            .data-table th,
+            .data-table td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1> Tables Testing</h1>
+            <p>Data tables with sorting, searching, pagination, and interactive rows</p>
+        </header>
+        
+        <main class="main-content">
+            <div class="table-controls">
+                <h2>Table Controls</h2>
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <label for="searchInput"> Search Table</label>
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search by name, email, department...">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label> Table Actions</label>
+                        <div>
+                            <button class="btn btn-primary" onclick="resetTable()">Reset Table</button>
+                            <button class="btn btn-success" onclick="addRandomRow()">Add Row</button>
+                            <button class="btn btn-warning" onclick="clearSelection()">Clear Selection</button>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label> Rows per Page</label>
+                        <select id="rowsPerPage" class="search-input" onchange="changeRowsPerPage()">
+                            <option value="5">5 rows</option>
+                            <option value="10" selected>10 rows</option>
+                            <option value="25">25 rows</option>
+                            <option value="50">50 rows</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-section">
+                <div class="table-header">
+                    <div class="table-title">Employee Data Table</div>
+                    <div class="table-info" id="tableInfo">Showing 1-10 of 25 employees</div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="tbl" class="data-table">
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable(0)">ID</th>
+                                <th onclick="sortTable(1)">Name</th>
+                                <th onclick="sortTable(2)">Email</th>
+                                <th onclick="sortTable(3)">Department</th>
+                                <th onclick="sortTable(4)">Status</th>
+                                <th onclick="sortTable(5)">Join Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Table rows will be generated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination" id="pagination">
+                    <!-- Pagination will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="event-log">
+                <h3> Table Event Log</h3>
+                <div class="log-content" id="logContent">
+                    <div class="log-entry">Waiting for table interactions...</div>
+                </div>
+            </div>
+
+            <a href="../index.html" class="back-link"> Back to Home</a>
+        </main>
+    </div>
+
+    <script>
+        // Sample data
+        const sampleData = [
+            { id: 1, name: 'John Smith', email: 'john.smith@company.com', department: 'Engineering', status: 'active', joinDate: '2022-01-15' },
+            { id: 2, name: 'Sarah Johnson', email: 'sarah.j@company.com', department: 'Marketing', status: 'active', joinDate: '2021-03-22' },
+            { id: 3, name: 'Mike Davis', email: 'mike.davis@company.com', department: 'Sales', status: 'inactive', joinDate: '2020-11-08' },
+            { id: 4, name: 'Emily Wilson', email: 'emily.w@company.com', department: 'HR', status: 'active', joinDate: '2022-06-30' },
+            { id: 5, name: 'Robert Brown', email: 'robert.b@company.com', department: 'Engineering', status: 'pending', joinDate: '2023-02-14' },
+            { id: 6, name: 'Lisa Anderson', email: 'lisa.a@company.com', department: 'Finance', status: 'active', joinDate: '2021-09-18' },
+            { id: 7, name: 'David Martinez', email: 'david.m@company.com', department: 'Engineering', status: 'active', joinDate: '2022-04-05' },
+            { id: 8, name: 'Jennifer Taylor', email: 'jennifer.t@company.com', department: 'Marketing', status: 'inactive', joinDate: '2020-07-12' },
+            { id: 9, name: 'William Garcia', email: 'william.g@company.com', department: 'Sales', status: 'active', joinDate: '2023-01-28' },
+            { id: 10, name: 'Maria Rodriguez', email: 'maria.r@company.com', department: 'HR', status: 'active', joinDate: '2022-08-16' },
+            { id: 11, name: 'James Lee', email: 'james.l@company.com', department: 'Engineering', status: 'pending', joinDate: '2023-03-10' },
+            { id: 12, name: 'Patricia White', email: 'patricia.w@company.com', department: 'Finance', status: 'active', joinDate: '2021-12-03' },
+            { id: 13, name: 'Christopher Hall', email: 'chris.h@company.com', department: 'Sales', status: 'inactive', joinDate: '2020-05-21' },
+            { id: 14, name: 'Nancy Young', email: 'nancy.y@company.com', department: 'Marketing', status: 'active', joinDate: '2022-10-07' },
+            { id: 15, name: 'Daniel King', email: 'daniel.k@company.com', department: 'Engineering', status: 'active', joinDate: '2023-04-01' },
+            { id: 16, name: 'Susan Wright', email: 'susan.w@company.com', department: 'HR', status: 'pending', joinDate: '2023-05-12' },
+            { id: 17, name: 'Thomas Lopez', email: 'thomas.l@company.com', department: 'Finance', status: 'active', joinDate: '2021-11-25' },
+            { id: 18, name: 'Karen Hill', email: 'karen.h@company.com', department: 'Sales', status: 'active', joinDate: '2022-09-14' },
+            { id: 19, name: 'Matthew Scott', email: 'matthew.s@company.com', department: 'Engineering', status: 'inactive', joinDate: '2020-12-30' },
+            { id: 20, name: 'Betty Green', email: 'betty.g@company.com', department: 'Marketing', status: 'active', joinDate: '2022-07-19' },
+            { id: 21, name: 'Joseph Adams', email: 'joseph.a@company.com', department: 'Finance', status: 'pending', joinDate: '2023-06-08' },
+            { id: 22, name: 'Linda Baker', email: 'linda.b@company.com', department: 'HR', status: 'active', joinDate: '2021-08-11' },
+            { id: 23, name: 'Richard Nelson', email: 'richard.n@company.com', department: 'Sales', status: 'active', joinDate: '2022-02-27' },
+            { id: 24, name: 'Barbara Carter', email: 'barbara.c@company.com', department: 'Engineering', status: 'inactive', joinDate: '2020-09-15' },
+            { id: 25, name: 'Charles Mitchell', email: 'charles.m@company.com', department: 'Marketing', status: 'active', joinDate: '2023-01-05' }
+        ];
+
+        let currentData = [...sampleData];
+        let filteredData = [...currentData];
+        let currentPage = 1;
+        let rowsPerPage = 10;
+        let sortColumn = -1;
+        let sortDirection = 'asc';
+        let selectedRow = null;
+
+        // Event logging
+        function logEvent(message, type = 'log-action') {
+            const logContent = document.getElementById('logContent');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            
+            logContent.appendChild(entry);
+            logContent.scrollTop = logContent.scrollHeight;
+            
+            // Keep only last 20 entries
+            while (logContent.children.length > 20) {
+                logContent.removeChild(logContent.firstChild);
+            }
+        }
+
+        // Render table
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const pageData = filteredData.slice(start, end);
+
+            tbody.innerHTML = '';
+            
+            pageData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.dataset.id = row.id;
+                
+                tr.innerHTML = `
+                    <td>${row.id}</td>
+                    <td>${row.name}</td>
+                    <td>${row.email}</td>
+                    <td>${row.department}</td>
+                    <td><span class="status-badge status-${row.status}">${row.status}</span></td>
+                    <td>${row.joinDate}</td>
+                    <td>
+                        <button class="action-btn action-edit" onclick="editRow(${row.id})">Edit</button>
+                        <button class="action-btn action-delete" onclick="deleteRow(${row.id})">Delete</button>
+                    </td>
+                `;
+                
+                tr.addEventListener('click', function(e) {
+                    if (!e.target.classList.contains('action-btn')) {
+                        selectRow(this);
+                    }
+                });
+                
+                tbody.appendChild(tr);
+            });
+
+            updateTableInfo();
+            renderPagination();
+        }
+
+        // Update table info
+        function updateTableInfo() {
+            const start = (currentPage - 1) * rowsPerPage + 1;
+            const end = Math.min(currentPage * rowsPerPage, filteredData.length);
+            document.getElementById('tableInfo').textContent = 
+                `Showing ${start}-${end} of ${filteredData.length} employees`;
+        }
+
+        // Render pagination
+        function renderPagination() {
+            const pagination = document.getElementById('pagination');
+            const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+            
+            pagination.innerHTML = '';
+            
+            // Previous button
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-btn';
+            prevBtn.textContent = 'Previous';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => goToPage(currentPage - 1);
+            pagination.appendChild(prevBtn);
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                    pageBtn.textContent = i;
+                    pageBtn.onclick = () => goToPage(i);
+                    pagination.appendChild(pageBtn);
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    const dots = document.createElement('span');
+                    dots.textContent = '...';
+                    dots.style.padding = '0 5px';
+                    pagination.appendChild(dots);
+                }
+            }
+            
+            // Next button
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-btn';
+            nextBtn.textContent = 'Next';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => goToPage(currentPage + 1);
+            pagination.appendChild(nextBtn);
+            
+            // Page info
+            const pageInfo = document.createElement('span');
+            pageInfo.className = 'page-info';
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            pagination.appendChild(pageInfo);
+        }
+
+        // Go to page
+        function goToPage(page) {
+            currentPage = page;
+            renderTable();
+            logEvent(`Navigated to page ${page}`, 'log-action');
+        }
+
+        // Sort table
+        function sortTable(column) {
+            const headers = document.querySelectorAll('.data-table th');
+            headers.forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));
+            
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+            
+            const columnNames = ['id', 'name', 'email', 'department', 'status', 'joinDate'];
+            const columnName = columnNames[column];
+            
+            filteredData.sort((a, b) => {
+                let aVal = a[columnName];
+                let bVal = b[columnName];
+                
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+                
+                if (sortDirection === 'asc') {
+                    return aVal > bVal ? 1 : -1;
+                } else {
+                    return aVal < bVal ? 1 : -1;
+                }
+            });
+            
+            headers[column].classList.add(`sorted-${sortDirection}`);
+            renderTable();
+            logEvent(`Table sorted by ${columnName} (${sortDirection})`, 'log-sort');
+        }
+
+        // Search table
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            if (searchTerm === '') {
+                filteredData = [...currentData];
+            } else {
+                filteredData = currentData.filter(row => 
+                    row.name.toLowerCase().includes(searchTerm) ||
+                    row.email.toLowerCase().includes(searchTerm) ||
+                    row.department.toLowerCase().includes(searchTerm) ||
+                    row.status.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            currentPage = 1;
+            renderTable();
+            logEvent(`Search: "${searchTerm}" (${filteredData.length} results)`, 'log-search');
+        });
+
+        // Select row
+        function selectRow(row) {
+            if (selectedRow) {
+                selectedRow.classList.remove('selected');
+            }
+            
+            row.classList.add('selected');
+            selectedRow = row;
+            
+            const rowId = row.dataset.id;
+            logEvent(`Row selected: ID ${rowId}`, 'log-select');
+        }
+
+        // Clear selection
+        function clearSelection() {
+            if (selectedRow) {
+                selectedRow.classList.remove('selected');
+                selectedRow = null;
+                logEvent('Row selection cleared', 'log-select');
+            }
+        }
+
+        // Edit row
+        function editRow(id) {
+            const row = currentData.find(r => r.id === id);
+            logEvent(`Edit action triggered for ID ${id}: ${row.name}`, 'log-action');
+            alert(`Edit employee: ${row.name} (${row.email})`);
+        }
+
+        // Delete row
+        function deleteRow(id) {
+            const row = currentData.find(r => r.id === id);
+            if (confirm(`Are you sure you want to delete ${row.name}?`)) {
+                currentData = currentData.filter(r => r.id !== id);
+                filteredData = filteredData.filter(r => r.id !== id);
+                renderTable();
+                logEvent(`Row deleted: ID ${id} - ${row.name}`, 'log-action');
+            }
+        }
+
+        // Add random row
+        function addRandomRow() {
+            const names = ['Alex Thompson', 'Jessica Brown', 'Michael Davis', 'Amanda Wilson'];
+            const departments = ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance'];
+            const statuses = ['active', 'inactive', 'pending'];
+            
+            const newId = Math.max(...currentData.map(r => r.id)) + 1;
+            const newRow = {
+                id: newId,
+                name: names[Math.floor(Math.random() * names.length)],
+                email: `user${newId}@company.com`,
+                department: departments[Math.floor(Math.random() * departments.length)],
+                status: statuses[Math.floor(Math.random() * statuses.length)],
+                joinDate: '2023-07-15'
+            };
+            
+            currentData.push(newRow);
+            filteredData = [...currentData];
+            renderTable();
+            logEvent(`New row added: ID ${newId} - ${newRow.name}`, 'log-action');
+        }
+
+        // Reset table
+        function resetTable() {
+            currentData = [...sampleData];
+            filteredData = [...currentData];
+            currentPage = 1;
+            sortColumn = -1;
+            sortDirection = 'asc';
+            document.getElementById('searchInput').value = '';
+            
+            const headers = document.querySelectorAll('.data-table th');
+            headers.forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));
+            
+            clearSelection();
+            renderTable();
+            logEvent('Table reset to original state', 'log-action');
+        }
+
+        // Change rows per page
+        function changeRowsPerPage() {
+            rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
+            currentPage = 1;
+            renderTable();
+            logEvent(`Rows per page changed to ${rowsPerPage}`, 'log-action');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTable();
+            logEvent('Table page loaded and ready for testing', 'log-action');
+        });
+    </script>
+</body>
+</html>

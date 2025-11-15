@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA Training Site - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .intro h2 {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .intro p {
+            font-size: 1.1rem;
+            color: #6c757d;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .features {
+            margin-bottom: 50px;
+        }
+
+        .features h3 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .navigation {
+            margin-bottom: 50px;
+        }
+
+        .navigation h3 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .feature-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+
+        .feature-desc {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .nav-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .nav-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .nav-card h3 {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-card p {
+            color: #6c757d;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .nav-link {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status-complete {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-in-progress {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-pending {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 40px 0 20px;
+            color: #6c757d;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h4 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .footer-section p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 8px;
+        }
+
+        .footer-section ul li a {
+            color: #6c757d;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: #007bff;
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .footer-bottom p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: -20px;
+                border-radius: 0;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .nav-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🧪 QA Training Site</h1>
+            <p>Comprehensive Web Testing Playground for Automation Engineers</p>
+        </header>
+        
+        <main class="main-content">
+            <section class="intro">
+                <h2>Welcome to Your Testing Environment</h2>
+                <p>This comprehensive training site provides various web elements and scenarios for practicing Playwright automation testing. Each page is designed with deterministic locators and interactive features to help you master web automation.</p>
+            </section>
+
+            <section class="features" id="features">
+                <h3>Key Features</h3>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">🎯</div>
+                        <div class="feature-title">Deterministic Locators</div>
+                        <div class="feature-desc">ID, name, class, and data-testid attributes for reliable element selection</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">⚡</div>
+                        <div class="feature-title">Interactive Elements</div>
+                        <div class="feature-desc">Buttons, forms, alerts, and dynamic content for comprehensive testing</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🎨</div>
+                        <div class="feature-title">Modern UI Design</div>
+                        <div class="feature-desc">Clean, responsive interface with smooth animations and transitions</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📱</div>
+                        <div class="feature-title">Responsive Layout</div>
+                        <div class="feature-desc">Mobile-friendly design that works across all device sizes</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="navigation" id="navigation">
+                <h3>Testing Pages</h3>
+                <div class="nav-grid">
+                    <div class="nav-card">
+                        <h3>
+                            🔐 Authentication
+                            <span class="status-badge status-complete">Complete</span>
+                        </h3>
+                        <p>Login and welcome pages with form validation and session management</p>
+                        <a href="auth/login.html" class="nav-link">Go to Auth</a>
+                    </div>
+
+                    <div class="nav-card">
+                        <h3>
+                            📝 Forms
+                            <span class="status-badge status-complete">Complete</span>
+                        </h3>
+                        <p>Comprehensive form elements including inputs, selects, checkboxes, and validation</p>
+                        <a href="forms/index.html" class="nav-link">Go to Forms</a>
+                    </div>
+
+                    <div class="nav-card">
+                        <h3>
+                            🎯 Buttons
+                            <span class="status-badge status-complete">Complete</span>
+                        </h3>
+                        <p>Various button types: click, double-click, right-click, disabled, and timed interactions</p>
+                        <a href="buttons/index.html" class="nav-link">Go to Buttons</a>
+                    </div>
+
+                    <div class="nav-card">
+                        <h3>
+                            🚨 Alerts
+                            <span class="status-badge status-complete">Complete</span>
+                        </h3>
+                        <p>JavaScript alerts, confirm dialogs, and prompts with interaction logging</p>
+                        <a href="alerts/index.html" class="nav-link">Go to Alerts</a>
+                    </div>
+
+                    <div class="nav-card">
+                        <h3>
+                            🖼️ Iframes
+                            <span class="status-badge status-complete">Complete</span>
+                        </h3>
+                        <p>Frame switching, multiple iframes, and external content loading scenarios</p>
+                        <a href="iframe/iframe.html" class="nav-link">Go to Iframes</a>
+                    </div>
+
+                    <div class="nav-card">
+                        <h3>
+                            📊 Tables
+                            <span class="status-badge status-complete">Complete</span>
+                        </h3>
+                        <p>Data tables with sorting, searching, pagination, and interactive rows</p>
+                        <a href="tables/table.html" class="nav-link">Go to Tables</a>
+                    </div>
+
+                    <div class="nav-card">
+                        <h3>
+                            🎭 Shadow DOM
+                            <span class="status-badge status-complete">Complete</span>
+                        </h3>
+                        <p>Custom web components with encapsulated Shadow DOM for advanced testing</p>
+                        <a href="shadowdom/index.html" class="nav-link">Go to Shadow DOM</a>
+                    </div>
+
+                    <div class="nav-card">
+                        <h3>
+                            📤 File Upload
+                            <span class="status-badge status-complete">Complete</span>
+                        </h3>
+                        <p>File upload functionality with drag-and-drop and validation scenarios</p>
+                        <a href="upload/index.html" class="nav-link">Go to Upload</a>
+                    </div>
+
+                    <div class="nav-card">
+                        <h3>
+                            ⏱️ Dynamic Loading
+                            <span class="status-badge status-complete">Complete</span>
+                        </h3>
+                        <p>Delayed content loading, lazy loading, and async data fetching scenarios</p>
+                        <a href="dynamic/index.html" class="nav-link">Go to Dynamic</a>
+                    </div>
+
+                    <div class="nav-card">
+                        <h3>
+                            🔄 Drag & Drop
+                            <span class="status-badge status-complete">Complete</span>
+                        </h3>
+                        <p>Drag and drop functionality with various interaction patterns</p>
+                        <a href="dragdrop/index.html" class="nav-link">Go to Drag & Drop</a>
+                    </div>
+
+                    <div class="nav-card">
+                        <h3>
+                            🔌 API Testing
+                            <span class="status-badge status-complete">Complete</span>
+                        </h3>
+                        <p>API integration testing with mock data and response handling</p>
+                        <a href="api/index.html" class="nav-link">Go to API Testing</a>
+                    </div>
+
+                    <div class="nav-card">
+                        <h3>
+                            📥 Downloads
+                            <span class="status-badge status-complete">Complete</span>
+                        </h3>
+                        <p>File download testing with various formats and batch operations</p>
+                        <a href="download/index.html" class="nav-link">Go to Downloads</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>🧪 QA Training Site</h4>
+                    <p>Comprehensive web testing playground for automation engineers</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>📚 Resources</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#navigation">Testing Pages</a></li>
+                        <li><a href="https://playwright.dev" target="_blank">Playwright Docs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>🔗 Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="auth/login.html">Login</a></li>
+                        <li><a href="forms/index.html">Forms</a></li>
+                        <li><a href="api/index.html">API Testing</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>📧 Contact</h4>
+                    <p>Built for automation testing</p>
+                    <p> 2025 QA Training Site</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>Built with ❤️ for Playwright Automation Testing | Version 1.1</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

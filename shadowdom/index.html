@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow DOM - QA Training Site</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .shadow-section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .section-description {
+            color: #6c757d;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        .shadow-demo {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 4px solid #007bff;
+        }
+
+        .shadow-demo h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .shadow-demo p {
+            color: #6c757d;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .component-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .component-wrapper {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 2px solid #e9ecef;
+        }
+
+        .component-wrapper h4 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #212529;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+
+        .info-panel {
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .info-panel h5 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .info-panel pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: -20px;
+                border-radius: 0;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .component-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎭 Shadow DOM Testing</h1>
+            <p>Advanced Shadow DOM component testing playground</p>
+        </header>
+        
+        <main class="main-content">
+            <!-- Shadow DOM Introduction -->
+            <div class="shadow-section">
+                <h2 class="section-title">Shadow DOM Components</h2>
+                <p class="section-description">Test Shadow DOM encapsulation, styling, and interaction patterns</p>
+                
+                <div class="shadow-demo">
+                    <h3>What is Shadow DOM?</h3>
+                    <p>Shadow DOM allows for hidden DOM trees in the document, providing better encapsulation and styling isolation. This page contains various Shadow DOM components for testing automation scenarios.</p>
+                </div>
+            </div>
+
+            <!-- Custom Card Component -->
+            <div class="shadow-section">
+                <h2 class="section-title">Custom Card Component</h2>
+                <p class="section-description">A custom card component with encapsulated Shadow DOM</p>
+                
+                <div class="shadow-demo">
+                    <h3>Shadow Card Component</h3>
+                    <p>This custom card component has its own Shadow DOM with isolated styling and behavior.</p>
+                    
+                    <div class="controls">
+                        <button id="btnCreateCard" class="btn btn-primary">Create Card</button>
+                        <button id="btnUpdateCard" class="btn btn-success">Update Card</button>
+                        <button id="btnDestroyCard" class="btn btn-danger">Destroy Card</button>
+                    </div>
+                    
+                    <div id="cardContainer" class="component-container">
+                        <!-- Shadow cards will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shadow Form Component -->
+            <div class="shadow-section">
+                <h2 class="section-title">Shadow Form Component</h2>
+                <p class="section-description">A form component encapsulated in Shadow DOM</p>
+                
+                <div class="shadow-demo">
+                    <h3>Shadow Form Component</h3>
+                    <p>This form component demonstrates Shadow DOM form handling with encapsulated styles.</p>
+                    
+                    <div id="shadowFormContainer" class="component-wrapper">
+                        <!-- Shadow form will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shadow List Component -->
+            <div class="shadow-section">
+                <h2 class="section-title">Shadow List Component</h2>
+                <p class="section-description">A dynamic list component with Shadow DOM</p>
+                
+                <div class="shadow-demo">
+                    <h3>Shadow List Component</h3>
+                    <p>This list component manages items within its Shadow DOM with dynamic updates.</p>
+                    
+                    <div class="controls">
+                        <button id="btnAddItem" class="btn btn-primary">Add Item</button>
+                        <button id="btnRemoveItem" class="btn btn-warning">Remove Last Item</button>
+                        <button id="btnClearList" class="btn btn-danger">Clear List</button>
+                    </div>
+                    
+                    <div id="shadowListContainer" class="component-wrapper">
+                        <!-- Shadow list will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shadow DOM Information Panel -->
+            <div class="shadow-section">
+                <h2 class="section-title">Shadow DOM Information</h2>
+                <p class="section-description">Information about Shadow DOM elements and their properties</p>
+                
+                <div class="shadow-demo">
+                    <h3>Shadow DOM Inspector</h3>
+                    <p>Use the buttons below to inspect Shadow DOM elements and their properties.</p>
+                    
+                    <div class="controls">
+                        <button id="btnInspectCards" class="btn btn-primary">Inspect Cards</button>
+                        <button id="btnInspectForm" class="btn btn-success">Inspect Form</button>
+                        <button id="btnInspectList" class="btn btn-warning">Inspect List</button>
+                    </div>
+                    
+                    <div id="infoPanel" class="info-panel">
+                        <h5>Shadow DOM Information</h5>
+                        <pre id="infoContent">Click the buttons above to inspect Shadow DOM elements...</pre>
+                    </div>
+                </div>
+            </div>
+
+            <a href="../index.html" class="back-link">← Back to Home</a>
+        </main>
+    </div>
+
+    <script>
+        // Custom Card Component with Shadow DOM
+        class ShadowCard extends HTMLElement {
+            constructor() {
+                super();
+                this.attachShadow({ mode: 'open' });
+            }
+
+            connectedCallback() {
+                const title = this.getAttribute('title') || 'Default Title';
+                const content = this.getAttribute('content') || 'Default content';
+                const color = this.getAttribute('color') || '#007bff';
+
+                this.shadowRoot.innerHTML = `
+                    <style>
+                        .card {
+                            background: white;
+                            border-radius: 12px;
+                            padding: 20px;
+                            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                            border: 2px solid ${color};
+                            margin-bottom: 20px;
+                            transition: transform 0.3s ease;
+                        }
+                        .card:hover {
+                            transform: translateY(-5px);
+                        }
+                        .card-header {
+                            color: ${color};
+                            font-size: 1.2rem;
+                            font-weight: bold;
+                            margin-bottom: 10px;
+                        }
+                        .card-content {
+                            color: #495057;
+                            line-height: 1.6;
+                        }
+                        .card-footer {
+                            margin-top: 15px;
+                            padding-top: 15px;
+                            border-top: 1px solid #e9ecef;
+                        }
+                        .card-button {
+                            background: ${color};
+                            color: white;
+                            border: none;
+                            padding: 8px 16px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-size: 14px;
+                        }
+                        .card-button:hover {
+                            opacity: 0.8;
+                        }
+                    </style>
+                    <div class="card">
+                        <div class="card-header">${title}</div>
+                        <div class="card-content">${content}</div>
+                        <div class="card-footer">
+                            <button class="card-button" onclick="this.parentElement.parentElement.style.display='none'">Close</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Custom Form Component with Shadow DOM
+        class ShadowForm extends HTMLElement {
+            constructor() {
+                super();
+                this.attachShadow({ mode: 'open' });
+            }
+
+            connectedCallback() {
+                this.shadowRoot.innerHTML = `
+                    <style>
+                        .form-container {
+                            background: #f8f9fa;
+                            padding: 20px;
+                            border-radius: 8px;
+                            border: 1px solid #dee2e6;
+                        }
+                        .form-group {
+                            margin-bottom: 15px;
+                        }
+                        .form-label {
+                            display: block;
+                            margin-bottom: 5px;
+                            color: #495057;
+                            font-weight: 600;
+                        }
+                        .form-input {
+                            width: 100%;
+                            padding: 8px 12px;
+                            border: 1px solid #ced4da;
+                            border-radius: 4px;
+                            font-size: 14px;
+                        }
+                        .form-input:focus {
+                            outline: none;
+                            border-color: #007bff;
+                        }
+                        .form-button {
+                            background: #007bff;
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-size: 14px;
+                            margin-right: 10px;
+                        }
+                        .form-button:hover {
+                            background: #0056b3;
+                        }
+                        .form-result {
+                            margin-top: 15px;
+                            padding: 10px;
+                            background: #d4edda;
+                            border-radius: 4px;
+                            color: #155724;
+                            display: none;
+                        }
+                    </style>
+                    <div class="form-container">
+                        <div class="form-group">
+                            <label class="form-label" for="shadow-name">Name:</label>
+                            <input type="text" id="shadow-name" class="form-input" placeholder="Enter your name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="shadow-email">Email:</label>
+                            <input type="email" id="shadow-email" class="form-input" placeholder="Enter your email">
+                        </div>
+                        <div class="form-group">
+                            <button class="form-button" onclick="this.parentElement.parentElement.querySelector('.form-result').style.display='block'; this.parentElement.parentElement.querySelector('.form-result').textContent='Form submitted successfully!'">Submit</button>
+                            <button class="form-button" style="background: #6c757d;" onclick="this.parentElement.parentElement.querySelector('.form-result').style.display='none'; document.getElementById('shadow-name').value=''; document.getElementById('shadow-email').value='';">Reset</button>
+                        </div>
+                        <div class="form-result" id="shadow-form-result"></div>
+                    </div>
+                `;
+            }
+        }
+
+        // Custom List Component with Shadow DOM
+        class ShadowList extends HTMLElement {
+            constructor() {
+                super();
+                this.attachShadow({ mode: 'open' });
+                this.items = ['Item 1', 'Item 2', 'Item 3'];
+            }
+
+            connectedCallback() {
+                this.render();
+            }
+
+            render() {
+                this.shadowRoot.innerHTML = `
+                    <style>
+                        .list-container {
+                            background: white;
+                            border-radius: 8px;
+                            padding: 20px;
+                            border: 1px solid #dee2e6;
+                        }
+                        .list-title {
+                            font-size: 1.2rem;
+                            font-weight: bold;
+                            color: #495057;
+                            margin-bottom: 15px;
+                        }
+                        .list-items {
+                            list-style: none;
+                            padding: 0;
+                        }
+                        .list-item {
+                            background: #f8f9fa;
+                            padding: 10px 15px;
+                            margin-bottom: 8px;
+                            border-radius: 6px;
+                            border-left: 4px solid #007bff;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+                        .list-item:hover {
+                            background: #e9ecef;
+                        }
+                        .item-text {
+                            color: #495057;
+                        }
+                        .item-remove {
+                            background: #dc3545;
+                            color: white;
+                            border: none;
+                            padding: 4px 8px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-size: 12px;
+                        }
+                        .item-remove:hover {
+                            background: #c82333;
+                        }
+                        .empty-message {
+                            color: #6c757d;
+                            font-style: italic;
+                            text-align: center;
+                            padding: 20px;
+                        }
+                    </style>
+                    <div class="list-container">
+                        <div class="list-title">Dynamic List</div>
+                        <ul class="list-items" id="list-items">
+                            ${this.items.map((item, index) => `
+                                <li class="list-item">
+                                    <span class="item-text">${item}</span>
+                                    <button class="item-remove" onclick="this.parentElement.parentElement.parentElement.parentElement.parentElement.remove(${index})">Remove</button>
+                                </li>
+                            `).join('')}
+                        </ul>
+                        <div class="empty-message" id="empty-message" style="display: none;">No items in list</div>
+                    </div>
+                `;
+
+                // Add remove method
+                this.remove = (index) => {
+                    this.items.splice(index, 1);
+                    this.render();
+                };
+            }
+
+            addItem(text) {
+                this.items.push(text);
+                this.render();
+            }
+
+            removeLastItem() {
+                if (this.items.length > 0) {
+                    this.items.pop();
+                    this.render();
+                }
+            }
+
+            clearList() {
+                this.items = [];
+                this.render();
+            }
+        }
+
+        // Register custom elements
+        customElements.define('shadow-card', ShadowCard);
+        customElements.define('shadow-form', ShadowForm);
+        customElements.define('shadow-list', ShadowList);
+
+        // Component management
+        let cardCount = 0;
+        let listItemCount = 3;
+        let shadowList = null;
+
+        // Create card
+        document.getElementById('btnCreateCard').addEventListener('click', function() {
+            cardCount++;
+            const card = document.createElement('shadow-card');
+            card.setAttribute('title', `Card ${cardCount}`);
+            card.setAttribute('content', `This is card number ${cardCount} with Shadow DOM encapsulation.`);
+            card.setAttribute('color', `hsl(${cardCount * 60}, 70%, 50%)`);
+            
+            const container = document.getElementById('cardContainer');
+            container.appendChild(card);
+        });
+
+        // Update card
+        document.getElementById('btnUpdateCard').addEventListener('click', function() {
+            const cards = document.querySelectorAll('shadow-card');
+            if (cards.length > 0) {
+                const lastCard = cards[cards.length - 1];
+                lastCard.setAttribute('title', `Updated Card ${cardCount}`);
+                lastCard.setAttribute('content', `This card has been updated at ${new Date().toLocaleTimeString()}`);
+            }
+        });
+
+        // Destroy card
+        document.getElementById('btnDestroyCard').addEventListener('click', function() {
+            const cards = document.querySelectorAll('shadow-card');
+            if (cards.length > 0) {
+                const lastCard = cards[cards.length - 1];
+                lastCard.remove();
+            }
+        });
+
+        // Create shadow form
+        const shadowForm = document.createElement('shadow-form');
+        document.getElementById('shadowFormContainer').appendChild(shadowForm);
+
+        // Create shadow list
+        shadowList = document.createElement('shadow-list');
+        document.getElementById('shadowListContainer').appendChild(shadowList);
+
+        // List management
+        document.getElementById('btnAddItem').addEventListener('click', function() {
+            listItemCount++;
+            shadowList.addItem(`Item ${listItemCount}`);
+        });
+
+        document.getElementById('btnRemoveItem').addEventListener('click', function() {
+            shadowList.removeLastItem();
+        });
+
+        document.getElementById('btnClearList').addEventListener('click', function() {
+            shadowList.clearList();
+            listItemCount = 0;
+        });
+
+        // Shadow DOM inspection
+        function inspectShadowDOM(elementName, element) {
+            const info = {
+                tagName: element.tagName,
+                shadowRoot: !!element.shadowRoot,
+                shadowRootMode: element.shadowRoot ? element.shadowRoot.mode : 'none',
+                innerHTML: element.shadowRoot ? element.shadowRoot.innerHTML.substring(0, 200) + '...' : 'no shadow root',
+                childElementCount: element.shadowRoot ? element.shadowRoot.childElementCount : 0
+            };
+
+            const infoContent = document.getElementById('infoContent');
+            infoContent.textContent = `${elementName} Information:\n\n` +
+                `Tag Name: ${info.tagName}\n` +
+                `Has Shadow Root: ${info.shadowRoot}\n` +
+                `Shadow Root Mode: ${info.shadowRootMode}\n` +
+                `Child Elements: ${info.childElementCount}\n` +
+                `Shadow HTML Preview: ${info.innerHTML}`;
+        }
+
+        document.getElementById('btnInspectCards').addEventListener('click', function() {
+            const cards = document.querySelectorAll('shadow-card');
+            if (cards.length > 0) {
+                inspectShadowDOM('Shadow Card', cards[0]);
+            } else {
+                document.getElementById('infoContent').textContent = 'No shadow cards found. Create some cards first!';
+            }
+        });
+
+        document.getElementById('btnInspectForm').addEventListener('click', function() {
+            const form = document.querySelector('shadow-form');
+            if (form) {
+                inspectShadowDOM('Shadow Form', form);
+            } else {
+                document.getElementById('infoContent').textContent = 'Shadow form not found!';
+            }
+        });
+
+        document.getElementById('btnInspectList').addEventListener('click', function() {
+            const list = document.querySelector('shadow-list');
+            if (list) {
+                inspectShadowDOM('Shadow List', list);
+            } else {
+                document.getElementById('infoContent').textContent = 'Shadow list not found!';
+            }
+        });
+    </script>
+</body>
+</html>

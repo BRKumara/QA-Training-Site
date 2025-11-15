@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Loading - QA Training Site</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .dynamic-section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .section-description {
+            color: #6c757d;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        .demo-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 4px solid #007bff;
+        }
+
+        .demo-container h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .demo-container p {
+            color: #6c757d;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #212529;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+
+        .content-area {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            min-height: 200px;
+            border: 2px solid #e9ecef;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading-spinner.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            width: 0%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .status-panel {
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .status-panel h5 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .status-content {
+            color: #495057;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .lazy-image {
+            width: 100%;
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lazy-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .lazy-image img.loaded {
+            opacity: 1;
+        }
+
+        .lazy-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .infinite-scroll-container {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .item-card h4 {
+            color: #495057;
+            margin-bottom: 8px;
+        }
+
+        .item-card p {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .container {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: -20px;
+                border-radius: 0;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>⏱️ Dynamic Loading</h1>
+            <p>Test delayed content loading and async data fetching scenarios</p>
+        </header>
+        
+        <main class="main-content">
+            <!-- Delayed Content Loading -->
+            <div class="dynamic-section">
+                <h2 class="section-title">Delayed Content Loading</h2>
+                <p class="section-description">Content that appears after specified delays</p>
+                
+                <div class="demo-container">
+                    <h3>Timed Content Display</h3>
+                    <p>Content will appear after different time delays to test waiting strategies.</p>
+                    
+                    <div class="controls">
+                        <button id="btnLoadDelayed" class="btn btn-primary">Load Content (3s delay)</button>
+                        <button id="btnLoadVeryDelayed" class="btn btn-warning">Load Content (10s delay)</button>
+                        <button id="btnClearDelayed" class="btn btn-secondary">Clear Content</button>
+                    </div>
+                    
+                    <div class="content-area" id="delayedContent">
+                        <div style="text-align: center; color: #6c757d; padding: 40px;">
+                            Click the buttons above to load delayed content...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progressive Loading -->
+            <div class="dynamic-section">
+                <h2 class="section-title">Progressive Loading</h2>
+                <p class="section-description">Content that loads progressively with progress indicators</p>
+                
+                <div class="demo-container">
+                    <h3>Progressive Content Loading</h3>
+                    <p>Watch the progress bar as content loads progressively.</p>
+                    
+                    <div class="controls">
+                        <button id="btnStartProgress" class="btn btn-success">Start Progressive Load</button>
+                        <button id="btnResetProgress" class="btn btn-secondary">Reset</button>
+                    </div>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill">0%</div>
+                    </div>
+                    
+                    <div class="content-area" id="progressiveContent">
+                        <div style="text-align: center; color: #6c757d; padding: 40px;">
+                            Content will appear progressively...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lazy Loading -->
+            <div class="dynamic-section">
+                <h2 class="section-title">Lazy Loading</h2>
+                <p class="section-description">Content that loads when scrolled into view</p>
+                
+                <div class="demo-container">
+                    <h3>Lazy Image Loading</h3>
+                    <p>Images load when they become visible in the viewport.</p>
+                    
+                    <div class="controls">
+                        <button id="btnLoadImages" class="btn btn-primary">Load All Images</button>
+                        <button id="btnResetImages" class="btn btn-secondary">Reset</button>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <div class="lazy-image" data-src="https://picsum.photos/seed/dynamic1/400/300.jpg">
+                            <div class="lazy-placeholder">
+                                <div class="spinner"></div>
+                                <p>Loading...</p>
+                            </div>
+                            <img src="" alt="Lazy loaded image 1">
+                        </div>
+                        
+                        <div class="lazy-image" data-src="https://picsum.photos/seed/dynamic2/400/300.jpg">
+                            <div class="lazy-placeholder">
+                                <div class="spinner"></div>
+                                <p>Loading...</p>
+                            </div>
+                            <img src="" alt="Lazy loaded image 2">
+                        </div>
+                        
+                        <div class="lazy-image" data-src="https://picsum.photos/seed/dynamic3/400/300.jpg">
+                            <div class="lazy-placeholder">
+                                <div class="spinner"></div>
+                                <p>Loading...</p>
+                            </div>
+                            <img src="" alt="Lazy loaded image 3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Infinite Scroll -->
+            <div class="dynamic-section">
+                <h2 class="section-title">Infinite Scroll</h2>
+                <p class="section-description">Content that loads continuously as you scroll</p>
+                
+                <div class="demo-container">
+                    <h3>Infinite Scroll List</h3>
+                    <p>Scroll down to load more items automatically.</p>
+                    
+                    <div class="controls">
+                        <button id="btnLoadMore" class="btn btn-primary">Load More Items</button>
+                        <button id="btnResetScroll" class="btn btn-secondary">Reset List</button>
+                    </div>
+                    
+                    <div class="infinite-scroll-container" id="scrollContainer">
+                        <!-- Items will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- AJAX Content Loading -->
+            <div class="dynamic-section">
+                <h2 class="section-title">AJAX Content Loading</h2>
+                <p class="section-description">Content loaded via asynchronous requests</p>
+                
+                <div class="demo-container">
+                    <h3>Dynamic Data Loading</h3>
+                    <p>Load data dynamically using simulated AJAX requests.</p>
+                    
+                    <div class="controls">
+                        <button id="btnLoadUsers" class="btn btn-success">Load Users Data</button>
+                        <button id="btnLoadPosts" class="btn btn-primary">Load Posts Data</button>
+                        <button id="btnLoadComments" class="btn btn-warning">Load Comments Data</button>
+                        <button id="btnClearAjax" class="btn btn-secondary">Clear Data</button>
+                    </div>
+                    
+                    <div class="loading-spinner" id="ajaxLoader">
+                        <div class="spinner"></div>
+                        <p>Loading data...</p>
+                    </div>
+                    
+                    <div class="content-area" id="ajaxContent">
+                        <div style="text-align: center; color: #6c757d; padding: 40px;">
+                            Click buttons above to load dynamic data...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Monitor -->
+            <div class="dynamic-section">
+                <h2 class="section-title">Loading Status Monitor</h2>
+                <p class="section-description">Real-time status of all loading operations</p>
+                
+                <div class="demo-container">
+                    <h3>Activity Monitor</h3>
+                    <p>Monitor all dynamic loading activities and their status.</p>
+                    
+                    <div class="controls">
+                        <button id="btnClearStatus" class="btn btn-danger">Clear Status Log</button>
+                    </div>
+                    
+                    <div class="status-panel">
+                        <h5>Loading Status</h5>
+                        <div id="statusContent" class="status-content">
+                            <div>✓ Page loaded successfully</div>
+                            <div>⏳ Ready for dynamic loading operations</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <a href="../index.html" class="back-link">← Back to Home</a>
+        </main>
+    </div>
+
+    <script>
+        // Status management
+        function addStatus(message, type = 'info') {
+            const statusContent = document.getElementById('statusContent');
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = type === 'success' ? '✓' : type === 'error' ? '✗' : type === 'loading' ? '⏳' : '•';
+            
+            const statusEntry = document.createElement('div');
+            statusEntry.textContent = `${icon} [${timestamp}] ${message}`;
+            statusContent.appendChild(statusEntry);
+            
+            // Keep only last 10 status entries
+            while (statusContent.children.length > 10) {
+                statusContent.removeChild(statusContent.firstChild);
+            }
+        }
+
+        // Delayed content loading
+        let delayedTimeout;
+        
+        document.getElementById('btnLoadDelayed').addEventListener('click', function() {
+            const contentArea = document.getElementById('delayedContent');
+            const button = this;
+            
+            button.disabled = true;
+            contentArea.innerHTML = '<div class="loading-spinner active"><div class="spinner"></div><p>Loading content...</p></div>';
+            
+            addStatus('Started delayed content loading (3s)', 'loading');
+            
+            delayedTimeout = setTimeout(() => {
+                contentArea.innerHTML = `
+                    <div class="fade-in">
+                        <h3 style="color: #28a745; margin-bottom: 15px;">✓ Content Loaded Successfully!</h3>
+                        <p style="color: #495057; margin-bottom: 15px;">This content was loaded after a 3-second delay to test waiting strategies.</p>
+                        <div style="background: #d4edda; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                            <strong>Load Time:</strong> ${new Date().toLocaleTimeString()}<br>
+                            <strong>Delay:</strong> 3 seconds<br>
+                            <strong>Status:</strong> Complete
+                        </div>
+                    </div>
+                `;
+                button.disabled = false;
+                addStatus('Delayed content loaded successfully', 'success');
+            }, 3000);
+        });
+
+        document.getElementById('btnLoadVeryDelayed').addEventListener('click', function() {
+            const contentArea = document.getElementById('delayedContent');
+            const button = this;
+            
+            button.disabled = true;
+            contentArea.innerHTML = '<div class="loading-spinner active"><div class="spinner"></div><p>Loading content... This will take a while...</p></div>';
+            
+            addStatus('Started very delayed content loading (10s)', 'loading');
+            
+            delayedTimeout = setTimeout(() => {
+                contentArea.innerHTML = `
+                    <div class="fade-in">
+                        <h3 style="color: #ffc107; margin-bottom: 15px;">⚠️ Long Wait Complete!</h3>
+                        <p style="color: #495057; margin-bottom: 15px;">This content was loaded after a 10-second delay to test long wait strategies.</p>
+                        <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                            <strong>Load Time:</strong> ${new Date().toLocaleTimeString()}<br>
+                            <strong>Delay:</strong> 10 seconds<br>
+                            <strong>Status:</strong> Complete (Long Wait)
+                        </div>
+                    </div>
+                `;
+                button.disabled = false;
+                addStatus('Very delayed content loaded successfully', 'success');
+            }, 10000);
+        });
+
+        document.getElementById('btnClearDelayed').addEventListener('click', function() {
+            clearTimeout(delayedTimeout);
+            document.getElementById('delayedContent').innerHTML = '<div style="text-align: center; color: #6c757d; padding: 40px;">Click the buttons above to load delayed content...</div>';
+            document.getElementById('btnLoadDelayed').disabled = false;
+            document.getElementById('btnLoadVeryDelayed').disabled = false;
+            addStatus('Delayed content cleared', 'info');
+        });
+
+        // Progressive loading
+        let progressInterval;
+        
+        document.getElementById('btnStartProgress').addEventListener('click', function() {
+            const progressFill = document.getElementById('progressFill');
+            const contentArea = document.getElementById('progressiveContent');
+            const button = this;
+            
+            button.disabled = true;
+            let progress = 0;
+            
+            addStatus('Started progressive loading', 'loading');
+            
+            progressInterval = setInterval(() => {
+                progress += 10;
+                progressFill.style.width = progress + '%';
+                progressFill.textContent = progress + '%';
+                
+                if (progress <= 30) {
+                    contentArea.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 40px;">Initializing content...</div>';
+                } else if (progress <= 60) {
+                    contentArea.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 40px;">Loading content components...</div>';
+                } else if (progress <= 90) {
+                    contentArea.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 40px;">Finalizing content...</div>';
+                } else {
+                    clearInterval(progressInterval);
+                    contentArea.innerHTML = `
+                        <div class="fade-in">
+                            <h3 style="color: #28a745; margin-bottom: 15px;">✓ Progressive Load Complete!</h3>
+                            <p style="color: #495057; margin-bottom: 15px;">Content loaded progressively with real-time progress updates.</p>
+                            <div style="background: #d4edda; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                                <strong>Progress:</strong> 100%<br>
+                                <strong>Load Time:</strong> ${new Date().toLocaleTimeString()}<br>
+                                <strong>Method:</strong> Progressive Loading
+                            </div>
+                        </div>
+                    `;
+                    button.disabled = false;
+                    addStatus('Progressive loading completed successfully', 'success');
+                }
+            }, 500);
+        });
+
+        document.getElementById('btnResetProgress').addEventListener('click', function() {
+            clearInterval(progressInterval);
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressFill').textContent = '0%';
+            document.getElementById('progressiveContent').innerHTML = '<div style="text-align: center; color: #6c757d; padding: 40px;">Content will appear progressively...</div>';
+            document.getElementById('btnStartProgress').disabled = false;
+            addStatus('Progressive loading reset', 'info');
+        });
+
+        // Lazy loading
+        document.getElementById('btnLoadImages').addEventListener('click', function() {
+            const lazyImages = document.querySelectorAll('.lazy-image');
+            
+            addStatus('Started lazy image loading', 'loading');
+            
+            lazyImages.forEach((container, index) => {
+                setTimeout(() => {
+                    const img = container.querySelector('img');
+                    const placeholder = container.querySelector('.lazy-placeholder');
+                    const src = container.dataset.src;
+                    
+                    img.src = src;
+                    img.onload = () => {
+                        img.classList.add('loaded');
+                        placeholder.style.display = 'none';
+                        addStatus(`Image ${index + 1} loaded successfully`, 'success');
+                    };
+                }, index * 1000);
+            });
+        });
+
+        document.getElementById('btnResetImages').addEventListener('click', function() {
+            const lazyImages = document.querySelectorAll('.lazy-image');
+            
+            lazyImages.forEach(container => {
+                const img = container.querySelector('img');
+                const placeholder = container.querySelector('.lazy-placeholder');
+                
+                img.src = '';
+                img.classList.remove('loaded');
+                placeholder.style.display = 'block';
+            });
+            
+            addStatus('Lazy images reset', 'info');
+        });
+
+        // Infinite scroll
+        let scrollItemCount = 0;
+        
+        function addScrollItems(count = 5) {
+            const container = document.getElementById('scrollContainer');
+            
+            for (let i = 0; i < count; i++) {
+                scrollItemCount++;
+                const item = document.createElement('div');
+                item.className = 'item-card fade-in';
+                item.innerHTML = `
+                    <h4>Item #${scrollItemCount}</h4>
+                    <p>This is dynamically loaded item number ${scrollItemCount}. It was loaded at ${new Date().toLocaleTimeString()}.</p>
+                `;
+                container.appendChild(item);
+            }
+            
+            addStatus(`Loaded ${count} more items (total: ${scrollItemCount})`, 'success');
+        }
+
+        document.getElementById('btnLoadMore').addEventListener('click', function() {
+            addScrollItems(5);
+        });
+
+        document.getElementById('btnResetScroll').addEventListener('click', function() {
+            document.getElementById('scrollContainer').innerHTML = '';
+            scrollItemCount = 0;
+            addStatus('Infinite scroll list reset', 'info');
+        });
+
+        // Infinite scroll detection
+        document.getElementById('scrollContainer').addEventListener('scroll', function() {
+            if (this.scrollTop + this.clientHeight >= this.scrollHeight - 50) {
+                addScrollItems(3);
+            }
+        });
+
+        // AJAX content loading
+        function simulateAjaxRequest(dataType, delay = 2000) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const mockData = {
+                        users: [
+                            { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
+                            { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User' },
+                            { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'Moderator' }
+                        ],
+                        posts: [
+                            { id: 1, title: 'First Post', content: 'This is the first post content...', author: 'John Doe' },
+                            { id: 2, title: 'Second Post', content: 'This is the second post content...', author: 'Jane Smith' },
+                            { id: 3, title: 'Third Post', content: 'This is the third post content...', author: 'Bob Johnson' }
+                        ],
+                        comments: [
+                            { id: 1, text: 'Great post!', author: 'User1', postId: 1 },
+                            { id: 2, text: 'Thanks for sharing', author: 'User2', postId: 2 },
+                            { id: 3, text: 'Interesting content', author: 'User3', postId: 3 }
+                        ]
+                    };
+                    
+                    resolve(mockData[dataType] || []);
+                }, delay);
+            });
+        }
+
+        document.getElementById('btnLoadUsers').addEventListener('click', async function() {
+            const loader = document.getElementById('ajaxLoader');
+            const contentArea = document.getElementById('ajaxContent');
+            
+            loader.classList.add('active');
+            contentArea.style.display = 'none';
+            addStatus('Loading users data...', 'loading');
+            
+            try {
+                const users = await simulateAjaxRequest('users', 1500);
+                
+                loader.classList.remove('active');
+                contentArea.style.display = 'block';
+                
+                contentArea.innerHTML = `
+                    <div class="fade-in">
+                        <h3 style="color: #28a745; margin-bottom: 15px;">✓ Users Data Loaded</h3>
+                        <div style="display: grid; gap: 15px;">
+                            ${users.map(user => `
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #007bff;">
+                                    <strong>${user.name}</strong> (${user.role})<br>
+                                    <small style="color: #6c757d;">${user.email}</small>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                addStatus('Users data loaded successfully', 'success');
+            } catch (error) {
+                loader.classList.remove('active');
+                contentArea.style.display = 'block';
+                contentArea.innerHTML = '<div style="color: #dc3545;">Error loading users data</div>';
+                addStatus('Error loading users data', 'error');
+            }
+        });
+
+        document.getElementById('btnLoadPosts').addEventListener('click', async function() {
+            const loader = document.getElementById('ajaxLoader');
+            const contentArea = document.getElementById('ajaxContent');
+            
+            loader.classList.add('active');
+            contentArea.style.display = 'none';
+            addStatus('Loading posts data...', 'loading');
+            
+            try {
+                const posts = await simulateAjaxRequest('posts', 2000);
+                
+                loader.classList.remove('active');
+                contentArea.style.display = 'block';
+                
+                contentArea.innerHTML = `
+                    <div class="fade-in">
+                        <h3 style="color: #28a745; margin-bottom: 15px;">✓ Posts Data Loaded</h3>
+                        <div style="display: grid; gap: 15px;">
+                            ${posts.map(post => `
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745;">
+                                    <strong>${post.title}</strong><br>
+                                    <p style="color: #495057; margin: 10px 0;">${post.content}</p>
+                                    <small style="color: #6c757d;">By: ${post.author}</small>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                addStatus('Posts data loaded successfully', 'success');
+            } catch (error) {
+                loader.classList.remove('active');
+                contentArea.style.display = 'block';
+                contentArea.innerHTML = '<div style="color: #dc3545;">Error loading posts data</div>';
+                addStatus('Error loading posts data', 'error');
+            }
+        });
+
+        document.getElementById('btnLoadComments').addEventListener('click', async function() {
+            const loader = document.getElementById('ajaxLoader');
+            const contentArea = document.getElementById('ajaxContent');
+            
+            loader.classList.add('active');
+            contentArea.style.display = 'none';
+            addStatus('Loading comments data...', 'loading');
+            
+            try {
+                const comments = await simulateAjaxRequest('comments', 1000);
+                
+                loader.classList.remove('active');
+                contentArea.style.display = 'block';
+                
+                contentArea.innerHTML = `
+                    <div class="fade-in">
+                        <h3 style="color: #28a745; margin-bottom: 15px;">✓ Comments Data Loaded</h3>
+                        <div style="display: grid; gap: 15px;">
+                            ${comments.map(comment => `
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107;">
+                                    <p style="color: #495057; margin: 0;">"${comment.text}"</p>
+                                    <small style="color: #6c757d;">- ${comment.author} (Post #${comment.postId})</small>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                addStatus('Comments data loaded successfully', 'success');
+            } catch (error) {
+                loader.classList.remove('active');
+                contentArea.style.display = 'block';
+                contentArea.innerHTML = '<div style="color: #dc3545;">Error loading comments data</div>';
+                addStatus('Error loading comments data', 'error');
+            }
+        });
+
+        document.getElementById('btnClearAjax').addEventListener('click', function() {
+            document.getElementById('ajaxLoader').classList.remove('active');
+            document.getElementById('ajaxContent').style.display = 'block';
+            document.getElementById('ajaxContent').innerHTML = '<div style="text-align: center; color: #6c757d; padding: 40px;">Click buttons above to load dynamic data...</div>';
+            addStatus('AJAX content cleared', 'info');
+        });
+
+        document.getElementById('btnClearStatus').addEventListener('click', function() {
+            document.getElementById('statusContent').innerHTML = '<div>✓ Status log cleared</div>';
+        });
+
+        // Initialize
+        addStatus('Dynamic loading page initialized', 'success');
+    </script>
+</body>
+</html>
